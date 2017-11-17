@@ -1,0 +1,27 @@
+{% extends "./base.html" %}
+
+{% load static %}
+
+{% block title %}Employee - New{% endblock title %}
+
+{% block nav %}
+    {{ block.super }}
+    <a class="nav-item nav-link" href="{% url 'employees:index' %}">List</a>
+{% endblock nav %}
+
+{% block content %}
+    <h1>Create new Employee Profile</h1>
+
+    <form enctype="multipart/form-data" action="{% url 'employees:create' %}" method="post">
+        {% csrf_token %}
+        
+        <table class="table table-condensed table-bordered">
+            <tbody>
+                {{ form.as_table }}
+            </tbody>
+            
+        </table>
+        <input type="submit" value="Create">
+    </form>
+    
+{% endblock content %}

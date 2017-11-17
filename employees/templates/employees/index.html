@@ -1,0 +1,149 @@
+{% extends "./base.html" %}
+
+{% block title %}Employees{% endblock title %}
+
+{% block nav %}
+    {{ block.super }}
+{% endblock nav %}
+
+{% block head %}
+    <style type="text/css">
+        .model-icon{
+            font-size: 40px;
+            color: black;
+        }
+        .pager li.active > a, .pager li.active > span{
+            color: #fff;
+            background-color:#212121;
+            border-color: #212121;
+            pointer-events:none;
+        }
+    </style>
+{% endblock head %}
+
+{% block content %}
+     <h1 class="">Employees - List</h1>
+
+    {% if employee_list %}
+        <!-- list -->
+        <div class="container">
+            <table class="table table-condensed table-bordered table-hover table-striped color-black">
+                <thead class="table-inverse">
+                    <tr class="text-capitalize ">
+                        <th class="text-center " colspan="2">employee</th>
+                        <th class="text-center ">id number</th>
+                        <th class="text-center text-capitalize">abbreviation</th>
+                        <th class="text-center ">date hired</th>
+                        <th class="text-center ">actions</th>
+                    </tr>
+                </thead>
+                    {% for employee in employee_list %}
+                        <tr>
+                            <!-- employee image -->
+                            <td class="text-center">
+                                <a href="{% url 'employees:detail' employee.id %}"  title="view {{employee.abbr}}">
+                                    {% if employee.contact.image %}
+                                        <img src="/media/{{ employee.contact.image }}" width="50px" height="50px" class="img-thumbnail" alt="image of {{employee.contact.image}}">
+                                                                        
+                                    {% endif %}
+                                    
+                                    {% if not employee.contact.image %}
+                                        <i class="fa fa-user-circle model-icon"></i>
+                                    {% endif %}
+                                </a>
+                            </td>
+
+                             <!-- employee name -->
+                            <td>
+                                <a class="color-black" href="{% url 'employees:detail' employee.id %}"  title="view {{employee.abbr}}">
+                                    <u>{{employee.contact|title}}</u>
+                                    {% if not employee.date_resigned %}
+                                        <span class="badge badge-pill badge-success">Active</span>
+                                    {% endif %}
+                                    {% if employee.date_resigned %}
+                                        <span class="badge badge-pill badge-default">Resigned</span>
+                                    {% endif %}
+                                </a>
+                                <!-- badge here -->
+                            </td> 
+
+                            <!-- employee id_num -->
+                            <td class="text-center">{{employee.id_num}}</td>
+
+                            <!-- employee abbr -->
+                            <td class="text-center text-uppercase">{{employee.abbr}}</td>
+
+                            <!-- employee date_hired -->
+                            <td class="text-center">{{employee.date_hired}}</td>
+
+                            <!-- actions -->
+                            <td class="text-center">
+                                <a class="action-delete btn btn-outline-danger btn-sm" href="{% url 'employees:destroy' employee.id %}" title="delete">
+                                    <i class="fa fa-2x fa-trash-o" ></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    
+    <!-- pagination -->
+    <nav aria-label="Employee index navigation">
+        <ul class="pagination pagination-lg justify-content-center">
+            {% if employee_list.has_previous %}
+                <li class="previous  page-item ">
+                    <a class="page-link" href="?page={{ employee_list.previous_page_number }}"><i class="fa fa-angle-left icon-label" title="previous"></i></a>
+                </li>
+            {% endif %}
+            {% ifequal employee_list.has_previous False %}
+                <li class='disabled previous page-item '>
+                    <span class="page-link"><i class="fa fa-angle-left icon-label" title="previous"></i></span>
+                </li>
+            {% endifequal %}
+
+            {% with ''|center:employee_list.paginator.num_pages as range %}
+                {% for _ in range %}
+                    {% ifequal employee_list.number forloop.counter%}
+                        <li class="active page-item">
+                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                        </li>
+                    {% endifequal %}
+                    {% ifnotequal employee_list.number forloop.counter%}
+                        <li class=" page-item">
+                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                        </li>
+                    {% endifnotequal %}
+                {% endfor %}
+            {% endwith %}
+
+            {% if employee_list.has_next %}
+                <li class="next page-item">
+                    <a class="page-link" href="?page={{ employee_list.next_page_number }}"><i class="fa fa-angle-right icon-label" title="next"></i></a>
+                </li>
+            {% endif %}
+            {% ifequal employee_list.has_next False %}
+                <li class='page-item disabled'>
+                    <span class="page-link"><i class="fa fa-angle-right icon-label" title="next"></i></span>
+                </li>
+            {% endifequal %}
+        </ul>
+    </nav>  
+{% endblock content %}
+
+{% block script %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.action-delete').click(function(e){
+                if (!confirm('Delete?')) {
+                    e.preventDefault()
+                    return
+                } else {
+                }
+            })
+        })
+    </script>
+{% endblock script %}

@@ -1,0 +1,69 @@
+{% extends "./base.html" %}
+
+{% load static %}
+
+{% block title %}Employee - {{ employee.abbr|upper }}{% endblock title %}
+
+{% block nav %}
+    {{ block.super }}
+    <a class="nav-item nav-link" href="{% url 'employees:destroy' employee.id %}">Delete</a>
+    <a class="nav-item nav-link" href="{% url 'employees:index' %}">List</a>
+{% endblock nav %}
+
+{% block head %}
+    <style type="text/css">
+        .avatar {
+            border:2px solid #212121;
+        }            
+    </style>    
+{% endblock head %}
+
+{% block content %}
+     <h1>Employee - Detail</h1>
+
+     {% if employee.contact.image %}
+        <img class="img-thumbnail avatar" src="{% get_media_prefix %}{{ employee.contact.image }}" alt="image {{ employee.contact }}" width="150px" height="200px">
+     {% endif %}
+                                
+    {% if not employee.contact.image %}
+        <img class="img-thumbnail avatar" src="/media/contacts/images/empty.png" alt="image {{ employee.contact }}" width="200px" height="200px">
+                                        
+    {% endif %}
+
+    <form enctype="multipart/form-data" action="{% url 'employees:update' employee.id %}" method="post" class="form">
+        {% csrf_token %}
+
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <a data-toggle="collapse" href="#id-div-employee" aria-expanded="true">
+                    <div class="panel-heading bg-inverse color-gray">
+                        <h4 class="panel-title">
+                            Employee Info
+                        </h4>
+                    </div>
+                    
+                </a>
+            <div id="id-div-employee" aria-expanded="true" class="collapse show" >
+                <div class="panel-body">
+                    <table class="table table-condensed table-bordered" id="id-table-contact">
+                        <tbody>
+                            {{ form.as_table|lower }}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- submit button -->
+        <input type="submit" value="Save" id='id-bottom'>
+    </form>
+{% endblock content %}
+
+{% block script %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            alert('Welcome to {{employee.abbr|upper}}\'s employee profile.')
+        })
+    </script>
+{% endblock script %}

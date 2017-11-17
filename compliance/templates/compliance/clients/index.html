@@ -1,0 +1,208 @@
+{% extends "../base.html" %}
+
+{% block title %}Clients{% endblock title %}
+
+{% block nav %}
+    {{ block.super }}
+{% endblock nav %}
+
+{% block head %}
+    <style type="text/css">
+        .model-icon{
+            font-size: 40px;
+            color: black;
+        }
+        .pager li.active > a, .pager li.active > span{
+            color: #fff;
+            background-color:#212121;
+            border-color: #212121;
+            pointer-events:none;
+        }
+        .actions-toggle-icons{
+            font-size: 25px;
+        }
+    </style>
+{% endblock head %}
+
+{% block content %}
+     <h1 class="">Clients - List</h1>
+
+    {% if client_list %}
+        <!-- list -->
+        <div class="container">
+            <table class="table table-condensed table-bordered table-hover table-striped color-black">
+                <thead class="table-inverse">
+                    <tr class="text-capitalize ">
+                        <th class="text-center " colspan="2">contact</th>
+                        <th class="text-center ">line of business</th>
+                        <th class="text-center ">actions</th>
+                    </tr>
+                </thead>
+                    {% for client in client_list %}
+                        <tr>
+                            <!-- client image -->
+                            <td class="text-center">
+                                <a href="{% url 'compliance:client_detail' client.id %}"  title="view {{client.contact.alias}}">
+                                    {% if client.contact.image %}
+                                        <img src="/media/{{ client.contact.image }}" width="50px" height="50px" class="img-thumbnail" alt="image of {{client.contact.image}}">
+                                                                        
+                                    {% endif %}
+                                    
+                                    {% if not client.contact.image %}
+                                        {% ifequal client.contact.entity_type 1 %}
+                                            <i class="fa fa-user-circle model-icon"></i>
+                                        {% endifequal %}
+                                        {% ifequal client.contact.entity_type 2 %}
+                                            <i class="fa fa-building model-icon"></i>
+                                        {% endifequal %}
+                                    {% endif %}
+                                </a>
+                            </td>
+
+                             <!-- client name -->
+                            <td>
+                                <a class="color-black" href="{% url 'compliance:client_detail' client.id %}"  title="view {{client.contact.alias}}">
+                                    <u>{{client.contact|title}}</u>
+                                </a>
+                                <!-- badge here -->
+                                {% if client.rdo %}
+                                    <span class="badge badge-pill badge-default" title="RDO">{{client.rdo}}</span>
+                                {% endif %}
+
+                                {% if client.is_active %}
+                                    <span class="badge badge-pill badge-success">Active</span>
+                                {% endif %}
+
+                                {% if not client.is_active %}
+                                    <span class="badge badge-pill badge-warning">Inactive</span>
+                                {% endif %}
+
+                                {% if client.date_end %}
+                                    <span class="badge badge-pill badge-danger" title="engagement status">Ended</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- client lob -->
+                            <td class="text-center">{{client.lob|title}}</td>
+
+                            <!-- actions -->
+                            <td class="text-center">
+                                <a class="btn btn-outline-default action-toggle-buttons" data-toggle="collapse" href="#id-table-actions-{{forloop.counter}}" aria-expanded="false" aria-controls="id-table-actions-{{forloop.counter}}">
+                                  <i class="fa fa-angle-double-down actions-toggle-icons"></i>
+                                </a>
+                                <div class="collapse" id="id-table-actions-{{forloop.counter}}">
+                                  <div class="card card-block">
+                                    <form id='id-form-delete-{{forloop.counter}}' action="{% url 'compliance:client_destroy' client.id %}" method="post">
+
+                                        {% csrf_token %}
+                                        <button form='id-form-delete-{{forloop.counter}}' class="action-delete btn btn-outline-danger" type="submit" title="delete">
+                                            <i class="fa fa fa-trash-o" ></i>
+                                        </button>
+                                        
+                                    </form>
+
+                                    {% if client.is_active %}
+                                        <form id='id-form-deactivate-{{forloop.counter}}' action="{% url 'compliance:client_deactivate' client.id %}" method="post">
+
+                                            {% csrf_token %}
+                                            <button form='id-form-deactivate-{{forloop.counter}}' class="action-deactivate btn btn-outline-warning" type="submit" title="deactivate">
+                                                <i class="fa fa fa-unlock" ></i>
+                                            </button>
+                                            
+                                        </form>
+                                    {% endif %}
+                                    {% if not client.is_active %}
+                                        <form id='id-form-activate-{{forloop.counter}}' action="{% url 'compliance:client_activate' client.id %}" method="post">
+
+                                            {% csrf_token %}
+                                            <button form='id-form-activate-{{forloop.counter}}' class="action-activate btn btn-outline-success" type="submit" title="activate">
+                                                <i class="fa fa fa-lock" ></i>
+                                            </button>
+
+                                        </form>
+                                    {% endif %}
+                                  </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    
+    <!-- pagination -->
+    <nav aria-label="Client index navigation">
+        <ul class="pagination pagination-lg justify-content-center">
+            {% if client_list.has_previous %}
+                <li class="previous  page-item ">
+                    <a class="page-link" href="?page={{ client_list.previous_page_number }}"><i class="fa fa-angle-left icon-label" title="previous"></i></a>
+                </li>
+            {% endif %}
+            {% ifequal client_list.has_previous False %}
+                <li class='disabled previous page-item '>
+                    <span class="page-link"><i class="fa fa-angle-left icon-label" title="previous"></i></span>
+                </li>
+            {% endifequal %}
+
+            {% with ''|center:client_list.paginator.num_pages as range %}
+                {% for _ in range %}
+                    {% ifequal client_list.number forloop.counter%}
+                        <li class="active page-item">
+                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                        </li>
+                    {% endifequal %}
+                    {% ifnotequal client_list.number forloop.counter%}
+                        <li class=" page-item">
+                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                        </li>
+                    {% endifnotequal %}
+                {% endfor %}
+            {% endwith %}
+
+            {% if client_list.has_next %}
+                <li class="next page-item">
+                    <a class="page-link" href="?page={{ client_list.next_page_number }}"><i class="fa fa-angle-right icon-label" title="next"></i></a>
+                </li>
+            {% endif %}
+            {% ifequal client_list.has_next False %}
+                <li class='page-item disabled'>
+                    <span class="page-link"><i class="fa fa-angle-right icon-label" title="next"></i></span>
+                </li>
+            {% endifequal %}
+        </ul>
+    </nav>  
+{% endblock content %}
+
+{% block script %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.action-delete').click(function(e){
+                if (!confirm('Delete?')) {
+                    e.preventDefault()
+                    return
+                }
+            })
+
+            $('.action-deactivate').click(function(e){
+                if (!confirm('Deactivate?')) {
+                    e.preventDefault()
+                    return
+                }
+            })
+
+            $('.action-activate').click(function(e){
+                if (!confirm('Activate?')) {
+                    e.preventDefault()
+                    return
+                }
+            })
+
+            $('.action-toggle-buttons').click(function(){
+                $(this).toggle()
+            })
+        })
+    </script>
+{% endblock script %}

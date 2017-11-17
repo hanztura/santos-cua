@@ -1,0 +1,12 @@
+{% extends "./base.html" %}
+{% block title %}Compliance{% endblock title %}
+
+{% block content %}
+    <h1>Compliance Home</h1>
+
+    <ul>
+        <li><a href="{% url 'compliance:client_index' %}">Clients</a></li>
+        <li><a href="{% url 'compliance:bir_index' %}">BIR</a></li>
+        <li><a href="{% url 'compliance:deadline_index' %}">Deadlines</a></li>
+    </ul>
+{% endblock content %}

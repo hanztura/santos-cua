@@ -1,0 +1,291 @@
+{% extends "./base.html" %}
+
+{% load static %}
+
+{% block title %}Contact - {{ contact.alias|upper }}{% endblock title %}
+
+{% block nav %}
+    {{ block.super }}
+    <a class="nav-item nav-link" href="{% url 'contacts:new' %}">New Contact</a>
+    <a class="nav-item nav-link" href="{% url 'employees:new' contact.id %}">New Employee</a>
+    <a class="nav-item nav-link" href="{% url 'contacts:destroy' contact.id %}">Delete</a>
+    <a class="nav-item nav-link" href="{% url 'contacts:index' %}">List</a>
+{% endblock nav %}
+
+{% block head %}
+    <style type="text/css">
+        .avatar {
+            border:2px solid #212121;
+            /*border-radius: 500px;
+            -webkit-border-radius: 500px;
+            -moz-border-radius: 500px;*/
+        }            
+    </style>    
+{% endblock head %}
+
+{% block content %}
+     <h1>Contact - Detail</h1>
+
+     {% if contact.image %}
+        <img class="img-thumbnail avatar" src="{% get_media_prefix %}{{ contact.image }}" alt="image {{ contact }}" width="150px" height="200px">
+     {% endif %}
+                                
+    {% if not contact.image %}
+        {% ifequal contact.entity_type 1 %}
+            <img class="img-thumbnail avatar" src="/media/contacts/images/empty.png" alt="image {{ contact }}" width="200px" height="200px">                                      
+        {% endifequal %}
+        
+        {% ifequal contact.entity_type 2 %}
+            <img class="img-thumbnail avatar" src="/media/contacts/images/empty-artificial.png" alt="image {{ contact }}" width="200px" height="200px">                                      
+        {% endifequal %}
+                                        
+    {% endif %}
+
+    <form enctype="multipart/form-data" action="{% url 'contacts:update' contact.id %}" method="post" class="form">
+        {% csrf_token %}
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <a data-toggle="collapse" href="#id-div-contact" aria-expanded="true">
+            <div class="panel-heading bg-inverse color-gray">
+                <h4 class="panel-title">
+                    Contact Info
+                </h4>
+            </div>
+            
+        </a>
+    <div id="id-div-contact" aria-expanded="true" class="collapse show" >
+        <div class="panel-body">
+            <table class="table table-condensed table-bordered" id="id-table-contact">
+                <!-- <caption>Contact</caption> -->
+
+                <tbody>
+                    {{ form.as_table|lower }}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+</div>
+
+    <!-- Phone -->
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <a data-toggle="collapse" href="#id-div-phone" >
+                <div class="panel-heading bg-inverse color-gray">
+                    <h4 class="panel-title">
+                        Phone
+                    </h4>
+                </div>
+                
+            </a>
+        <div id="id-div-phone" class="panel-collapse collapse">
+            <div class="panel-body">
+                <table class="table table-sm table-condensed table-bordered" id="id-table-contact-phone">
+                    <!-- <caption >Phone</caption> -->
+                    
+                    {{ formset_phone.management_form }}
+
+                    {% for form in formset_phone.forms %}
+                        {% if forloop.first %}
+                            <thead>
+                            <tr>
+                                {% for field in form.visible_fields %}
+                                    <th class="text-center">{{ field.label|capfirst }}</th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                        {% endif %}
+                        <tr class="{% cycle 'row1' 'row2' %} formset_row">
+                            {% for field in form.visible_fields %}
+                                <td>
+                                    {# Include the hidden fields in the form #}
+                                    {% if forloop.first %}
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                    {% endif %}
+                                    {{ field.errors.as_ul }}
+                                    {{ field }}
+                                    
+                                </td>
+                            {% endfor %}
+                        </tr>
+
+                        {% if forloop.last %}
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5" class="text-right">
+                                        <button class="btn btn-primary" title="add row"  type="button" id="id-button-add-row-contact-phone"><i class="fa fa-2x fa-mobile"></i></button>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        {% endif %}
+
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- address -->
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <a data-toggle="collapse" href="#id-div-address">
+                <div class="panel-heading bg-inverse color-gray">
+                    <h4 class="panel-title">
+                        Address
+                    </h4>
+                </div>
+            </a>
+        <div id="id-div-address" class="panel-collapse collapse">
+            <div class="panel-body">
+                <table class="table table-condensed table-hover table-bordered" id="id-table-contact-address">
+                    
+                    {{ formset_address.management_form }}
+
+                    {% for form in formset_address.forms %}
+                        {% if forloop.first %}
+                            <thead>
+                            <tr>
+                                {% for field in form.visible_fields %}
+                                    <th class="text-center">{{ field.label|capfirst }}</th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                        {% endif %}
+                        <tr class="{% cycle 'row1' 'row2' %} formset_row">
+                            {% for field in form.visible_fields %}
+                                <td>
+                                    {# Include the hidden fields in the form #}
+                                    {% if forloop.first %}
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                    {% endif %}
+                                    {{ field.errors.as_ul }}
+                                    <div class="form-group">
+                                        {{ field }}
+                                    </div>
+                                </td>
+                            {% endfor %}
+                        </tr>
+
+                        {% if forloop.last %}
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6" class="text-right">
+                                        <button class="btn btn-primary " title="add row"  type="button" id="id-button-add-row-contact-address"><i class="fa fa-2x fa-address-book-o"></i></button>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- email -->
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <a data-toggle="collapse" href="#id-div-email">
+                <div class="panel-heading bg-inverse color-gray">
+                    <h4 class="panel-title">
+                        Email
+                    </h4>
+                </div>
+            </a>
+        <div id="id-div-email" class="panel-collapse collapse">
+            <div class="panel-body">
+                <table class="table table-condensed table-bordered" id="id-table-contact-email">
+                    
+                    {{ formset_email.management_form }}
+
+                    {% for form in formset_email.forms %}
+                        {% if forloop.first %}
+                            <thead>
+                            <tr>
+                                {% for field in form.visible_fields %}
+                                    <th class="text-center">{{ field.label|capfirst }}</th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                        {% endif %}
+                        <tr class="{% cycle 'row1' 'row2' %} formset_row">
+                            {% for field in form.visible_fields %}
+                                <td>
+                                    {# Include the hidden fields in the form #}
+                                    {% if forloop.first %}
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                    {% endif %}
+                                    {{ field }}
+                                    {{ field.errors.as_ul }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+
+                        {% if forloop.last %}
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" class="text-right">
+                                        <button class="btn btn-primary" title="add row" type="button" id="id-button-add-row-contact-email"><i class="fa fa-2x fa-envelope-o"></i></button>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
+
+        <input type="submit" value="Update" id='id-bottom'>
+    </form>
+{% endblock content %}
+
+{% block script %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('#id-button-add-row-contact-phone').click(function() {
+                cloneMore('#id-table-contact-phone tbody tr:last', 'phone_set');
+            })
+
+            $('#id-button-add-row-contact-address').click(function() {
+                cloneMore('#id-table-contact-address tbody tr:last', 'address_set');
+            })
+
+            $('#id-button-add-row-contact-email').click(function() {
+                cloneMore('#id-table-contact-email tbody tr:last', 'email_set');
+            })
+
+            function cloneMore(selector, type) {
+                var newElement = $(selector).clone(true);
+                var total = $('#id_' + type + '-TOTAL_FORMS').val();
+                newElement.find(':input').each(function() {
+                    var name = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+                    var id = 'id_' + name;
+                    $(this).attr({'name': name, 'id': id});
+                    if ($(this).attr('type') == 'checkbox') {
+                    } else {
+                        $(this).removeAttr('value')
+                        
+                    }
+                });
+                newElement.find('label').each(function() {
+                    var newFor = $(this).attr('for').replace('-' + (total-1) + '-', '-' + total + '-');
+                    $(this).attr('for', newFor);
+                });
+                total++;
+                $('#id_' + type + '-TOTAL_FORMS').val(total);
+                $(selector).after(newElement);
+            }
+        })
+    </script>
+{% endblock script %}

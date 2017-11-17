@@ -1,0 +1,7 @@
+month field
+day field
+year field
+
+date field plus period
+
+return one of the many in one-to-many relationship
