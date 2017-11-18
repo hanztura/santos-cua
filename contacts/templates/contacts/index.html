@@ -4,7 +4,10 @@
 
 {% block nav %}
     {{ block.super }}
-    <a class="nav-item nav-link" href="{% url 'contacts:new' %}">New</a>
+    <!-- new -->
+    <a class="nav-item nav-link" href="{% url 'contacts:new' %}">
+        <i class="fa fa-2x fa-plus text-success" title="New"></i>
+    </a>
 {% endblock nav %}
 
 {% block head %}
@@ -58,17 +61,56 @@
                             </td> 
                             <td>
                                 <a class="color-black" href="{% url 'contacts:detail' contact.id %}"  title="view {{contact.alias}}">
-                                    <u>{{contact|title}}</u>
+                                    {% if contact.is_deleted %}
+                                        <s>{{contact|title}}</s>
+                                    {% endif %}
+                                    {% if not contact.is_deleted %}
+                                        <u>{{contact|title}}</u>
+                                    {% endif %}
+                                    
                                 </a>
+                                <!-- badges here -->
                                 {% if contact.is_client %}
                                     <span class="badge badge-pill badge-warning">Client</span>
                                 {% endif %}
+
+                                {% if contact.is_employee %}
+                                    <span class="badge badge-pill badge-primary">Employee</span>
+                                {% endif %}
+
+                                {% if contact.vip_alias %}
+                                    <span class="badge badge-pill badge-danger">{{contact.vip_alias|upper}}</span>
+                                {% endif %}
                             </td> 
-                            <td class="text-center">{{contact.tax_num}}</td>
+
+                            <!-- TIN -->
                             <td class="text-center">
-                                <a class="action-delete btn btn-outline-danger btn-sm" href="{% url 'contacts:destroy' contact.id %}" title="delete">
-                                    <i class="fa fa-2x fa-trash-o" ></i>
+                                {% if contact.tax_num %}
+                                    {{contact.tax_num}}
+                                {% endif %}
+                                {% if not contact.tax_num %}
+                                    ---
+                                {% endif %}
+                            </td>
+
+                            <!-- actions here -->
+                            <td class="text-center">
+                                <a class="btn btn-outline-default action-toggle-buttons" data-toggle="collapse" href="#id-table-actions-{{forloop.counter}}" aria-expanded="false" aria-controls="id-table-actions-{{forloop.counter}}">
+                                  <i class="fa fa-angle-double-down actions-toggle-icons"></i>
                                 </a>
+                                <div class="collapse" id="id-table-actions-{{forloop.counter}}">
+                                  <div class="card card-block">
+                                    <!-- delete -->
+                                    <form id='id-form-delete-{{forloop.counter}}' action="{% url 'contacts:destroy' contact.id %}" method="post">
+
+                                        {% csrf_token %}
+                                        <button form='id-form-delete-{{forloop.counter}}' class="action-delete btn btn-outline-danger" type="submit" title="delete">
+                                            <i class="fa fa fa-trash-o" ></i>
+                                        </button>
+                                        
+                                    </form>
+                                  </div>
+                                </div>
                             </td>
                         </tr>
                     {% endfor %}
@@ -125,12 +167,9 @@
 {% block script %}
     <script type="text/javascript">
         $(document).ready(function(){
-            $('.action-delete').click(function(e){
-                if (!confirm('Delete?')) {
-                    e.preventDefault()
-                    return
-                } else {
-                }
+
+            $('.action-toggle-buttons').click(function(){
+                $(this).toggle()
             })
         })
     </script>

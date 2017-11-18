@@ -10,6 +10,6 @@ class EmployeeForm(forms.ModelForm):
         year_list = list(range(2009, 2017))
         
         model = Employee
-        exclude = ['is_deleted']
+        exclude = []
         widgets = {'date_hired': forms.SelectDateWidget(years=year_list)}
 

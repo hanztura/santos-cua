@@ -11,12 +11,11 @@ urlpatterns = [
     url(r'^clients$', ClientViews.index, name='client_index'),
     url(r'^clients/(?P<id>[0-9]+)/$', ClientViews.detail, name='client_detail'),
     url(r'^clients/(?P<id>[0-9]+)/update/', ClientViews.update, name='client_update'),
-    url(r'^clients/new$', ClientViews.new, name='client_new'),
+    url(r'^clients/new/(?P<id>[0-9]+)*$', ClientViews.new, name='client_new'),
     url(r'^clients/create/', ClientViews.create, name='client_create'),
     url(r'^clients/(?P<id>[0-9]+)/delete/$', ClientViews.destroy, name='client_destroy'),
     url(r'^clients/(?P<id>[0-9]+)/deactivate/$', ClientViews.deactivate, name='client_deactivate'),
     url(r'^clients/(?P<id>[0-9]+)/activate/$', ClientViews.activate, name='client_activate'),
-
     # bir
     url(r'^bir$', BirViews.index, name='bir_index'),
     url(r'^bir/(?P<id>[0-9]+)/$', BirViews.detail, name='bir_detail'),

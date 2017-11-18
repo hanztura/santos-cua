@@ -4,6 +4,10 @@
 
 {% block nav %}
     {{ block.super }}
+    <!-- new -->
+    <a class="nav-item nav-link text-success" href="{% url 'compliance:client_new' %}">
+        <i class="fa fa-2x fa-plus" title="New"></i>
+    </a>
 {% endblock nav %}
 
 {% block head %}
@@ -83,7 +87,7 @@
                             </td>
 
                             <!-- client lob -->
-                            <td class="text-center">{{client.lob|title}}</td>
+                            <td class="">{{client.lob|title}}</td>
 
                             <!-- actions -->
                             <td class="text-center">
@@ -179,13 +183,6 @@
 {% block script %}
     <script type="text/javascript">
         $(document).ready(function(){
-            $('.action-delete').click(function(e){
-                if (!confirm('Delete?')) {
-                    e.preventDefault()
-                    return
-                }
-            })
-
             $('.action-deactivate').click(function(e){
                 if (!confirm('Deactivate?')) {
                     e.preventDefault()

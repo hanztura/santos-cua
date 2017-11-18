@@ -9,7 +9,7 @@ class ContactForm(forms.ModelForm):
         year_list = list(range(1950, 2017))
         
         model = Contact
-        exclude = ['is_deleted']
+        exclude = []
         widgets = {'date_of_birth': forms.SelectDateWidget(years=year_list)}
 
 

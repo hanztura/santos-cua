@@ -49,8 +49,10 @@
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <div class="navbar-nav">
-            <a class="nav-item nav-link" href="{% url 'public:home' %}">Home<span class="sr-only">(current)</span></a>
-            <a class="nav-item nav-link" href="{% url 'employees:new' %}">New</a>
+            <!-- home -->
+            <a class="nav-item nav-link text-info" href="{% url 'public:home' %}">
+                <i class="fa fa-2x fa-home" title="Home"></i>
+            </a>
 
               {% block nav %}
 
@@ -83,6 +85,25 @@
     <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bootstrap-4.0.0-alpha.6-dist/js/bootstrap.min.js' %}"></script>
 
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.action-delete').click(function(e){
+                if (!confirm('Are you sure to delete this record?')) {
+                    e.preventDefault()
+                    return
+                } else {
+                }
+            })
+
+            $('.action-save').click(function(e){
+                if (!confirm('Kindly make sure to review entries. Continue saving?')) {
+                    e.preventDefault()
+                    return
+                } else {
+                }
+            })
+        })
+    </script>
     {% block script %}{% endblock script %}
 
 </body>

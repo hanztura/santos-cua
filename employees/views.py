@@ -14,7 +14,7 @@ from .forms import EmployeeForm
 
 
 def index(request):
-    employee_list = Employee.objects.filter(is_deleted=False).order_by('abbr')
+    employee_list = Employee.objects.order_by('abbr')
     paginator = Paginator(employee_list, 10)
 
     page = request.GET.get('page')

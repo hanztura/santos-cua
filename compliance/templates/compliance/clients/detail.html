@@ -6,9 +6,28 @@
 
 {% block nav %}
     {{ block.super }}
-    <a class="nav-item nav-link" href="{% url 'compliance:client_destroy' model.id %}">Delete</a>
-    <a class="nav-item nav-link" href="{% url 'compliance:client_index' %}">List</a>
+
+    <!-- list -->
+    <a class="nav-item nav-link" href="{% url 'compliance:client_index' %}">
+        <i class="fa fa-2x fa-list-ul text-default" title="Clients"></i>
+    </a>
+
+    <!-- delete -->
+        <form id='id-form-delete' action="{% url 'compliance:client_destroy' model.id %}" method="post">
+
+            {% csrf_token %}
+            <button form='id-form-delete' class="action-delete btn btn-link" type="submit" title="delete">
+                <i class="fa fa-2x fa-trash text-danger" ></i>
+            </button>
+            
+        </form>
+    
+    <!-- new -->
+    <a class="nav-item nav-link" href="{% url 'compliance:client_new' %}">
+        <i class="fa fa-2x fa-plus text-success" title="New"></i>
+    </a>
 {% endblock nav %}
+
 
 {% block head %}
     <style type="text/css">
@@ -17,6 +36,7 @@
         }            
     </style>    
 {% endblock head %}
+
 
 {% block content %}
      <h1>Client - Detail</h1>
@@ -36,7 +56,7 @@
                                         
     {% endif %}
 
-    <form enctype="multipart/form-data" action="{% url 'compliance:client_update' model.id %}" method="post" class="form">
+    <form id="id-form-update" enctype="multipart/form-data" action="{% url 'compliance:client_update' model.id %}" method="post" class="form">
         {% csrf_token %}
 
         <div class="panel-group">
@@ -53,7 +73,7 @@
                 <div class="panel-body">
                     <table class="table table-condensed table-bordered" id="id-table-contact">
                         <tbody>
-                            {{ form.as_table|lower }}
+                            {{ form.as_table }}
                         </tbody>
                     </table>
                 </div>
@@ -61,8 +81,71 @@
             </div>
         </div>
 
+    <!-- formset practitioner -->
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <a data-toggle="collapse" href="#id-div-practitioner" >
+                <div class="panel-heading bg-inverse color-gray">
+                    <h4 class="panel-title">
+                        Practitioner
+                    </h4>
+                </div>
+                
+            </a>
+        <div id="id-div-practitioner" class="panel-collapse collapse">
+            <div class="panel-body">
+                <table class="table table-sm table-condensed table-bordered" id="id-table-client-practitioner">
+                    
+                    {{ formset_practitioner.management_form }}
+
+                    {% for form in formset_practitioner.forms %}
+                        {% if forloop.first %}
+                            <thead>
+                            <tr>
+                                {% for field in form.visible_fields %}
+                                    <th class="text-center">{{ field.label|capfirst }}</th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                        {% endif %}
+                        <tr class="{% cycle 'row1' 'row2' %} formset_row">
+                            {% for field in form.visible_fields %}
+                                <td>
+                                    {# Include the hidden fields in the form #}
+                                    {% if forloop.first %}
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                    {% endif %}
+                                    {{ field.errors.as_ul }}
+                                    {{ field }}
+                                    
+                                </td>
+                            {% endfor %}
+                        </tr>
+
+                        {% if forloop.last %}
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td colspan="2" class="text-right">
+                                        <button class="btn btn-default btn-block btn-sm" title="add row"  type="button" id="id-button-add-row-client-practitioner"><i class="fa fa-2x fa-user"></i></button>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        {% endif %}
+
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>        
+
         <!-- submit button -->
-        <input type="submit" value="Save" id='id-bottom'>
+            <button form='id-form-update' class="btn btn-success btn-block action-save" type="submit" title="Update" id='id-bottom'>
+                Save
+            </button>
     </form>
 {% endblock content %}
 
@@ -71,5 +154,31 @@
         $(document).ready(function(){
             alert('Welcome to {{model.contact.alias|upper}}\'s client profile.')
         })
+
+        $('#id-button-add-row-client-practitioner').click(function() {
+            cloneMore('#id-table-client-practitioner tbody tr:last', 'clientpractitioner_set');
+        })
+
+        function cloneMore(selector, type) {
+            var newElement = $(selector).clone(true);
+            var total = $('#id_' + type + '-TOTAL_FORMS').val();
+            newElement.find(':input').each(function() {
+                var name = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+                var id = 'id_' + name;
+                $(this).attr({'name': name, 'id': id});
+                if ($(this).attr('type') == 'checkbox') {
+                } else {
+                    $(this).removeAttr('value')
+                    
+                }
+            });
+            newElement.find('label').each(function() {
+                var newFor = $(this).attr('for').replace('-' + (total-1) + '-', '-' + total + '-');
+                $(this).attr('for', newFor);
+            });
+            total++;
+            $('#id_' + type + '-TOTAL_FORMS').val(total);
+            $(selector).after(newElement);
+        }
     </script>
 {% endblock script %}

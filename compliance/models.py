@@ -67,7 +67,6 @@ class ClientPractitioner(models.Model):
     date_assigned = models.DateField(
         null=False,
         blank=False,
-        default=timezone.now,
     )
     date_transferred = models.DateField(
         null=True,

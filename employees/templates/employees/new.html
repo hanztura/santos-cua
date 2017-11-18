@@ -6,7 +6,10 @@
 
 {% block nav %}
     {{ block.super }}
-    <a class="nav-item nav-link" href="{% url 'employees:index' %}">List</a>
+    <!-- list -->
+    <a class="nav-item nav-link" href="{% url 'employees:index' %}">
+        <i class="fa fa-2x fa-list-ul text-default" title="Employees"></i>
+    </a>
 {% endblock nav %}
 
 {% block content %}

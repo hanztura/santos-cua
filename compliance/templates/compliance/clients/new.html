@@ -1,1 +1,31 @@
-{% extends "./base.html" %}
+{% extends "../base.html" %}
+
+{% load static %}
+
+{% block title %}Compliance Client - New{% endblock title %}
+
+{% block nav %}
+    {{ block.super }}
+    <!-- list -->
+    <a class="nav-item nav-link" href="{% url 'compliance:client_index' %}">
+        <i class="fa fa-2x fa-list-ul text-default" title="Clients"></i>
+    </a>
+
+{% endblock nav %}
+
+{% block content %}
+    <h1>Create new Client Profile</h1>
+
+    <form enctype="multipart/form-data" action="{% url 'compliance:client_create' %}" method="post">
+        {% csrf_token %}
+        
+        <table class="table table-condensed table-bordered">
+            <tbody>
+                {{ form.as_table }}
+            </tbody>
+            
+        </table>
+        <input type="submit" value="Create">
+    </form>
+    
+{% endblock content %}

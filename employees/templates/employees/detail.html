@@ -6,8 +6,26 @@
 
 {% block nav %}
     {{ block.super }}
-    <a class="nav-item nav-link" href="{% url 'employees:destroy' employee.id %}">Delete</a>
-    <a class="nav-item nav-link" href="{% url 'employees:index' %}">List</a>
+
+    <!-- list -->
+    <a class="nav-item nav-link text-default" href="{% url 'employees:index' %}">
+        <i class="fa fa-2x fa-list-ul" title="Employees"></i>
+    </a>
+
+    <!-- delete -->
+        <form id='id-form-delete' action="{% url 'employees:destroy' employee.id %}" method="post">
+
+            {% csrf_token %}
+            <button form='id-form-delete' class="action-delete btn btn-link" type="submit" title="delete">
+                <i class="fa fa-2x fa-trash text-danger" ></i>
+            </button>
+            
+        </form>
+
+    <!-- new -->
+    <a class="nav-item nav-link text-success" href="{% url 'employees:new' %}">
+        <i class="fa fa-2x fa-plus" title="New"></i>
+    </a>
 {% endblock nav %}
 
 {% block head %}
@@ -56,7 +74,7 @@
         </div>
 
         <!-- submit button -->
-        <input type="submit" value="Save" id='id-bottom'>
+        <input class="action-save btn btn-success btn-block" type="submit" value="Save" id='id-bottom'>
     </form>
 {% endblock content %}
 

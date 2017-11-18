@@ -11,7 +11,7 @@ from .forms import ContactForm, PhoneFormSet, AddressFormSet, EmailFormSet
 
 
 def index(request):
-    contact_list = Contact.objects.filter(is_deleted=False).order_by('alias')
+    contact_list = Contact.objects.order_by('alias')
     paginator = Paginator(contact_list, 10)
 
     page = request.GET.get('page')
@@ -196,8 +196,10 @@ def update(request, contact_id):
         return HttpResponseRedirect(reverse('contacts:index'))
 
 def destroy(request, contact_id):
-    contact = Contact.objects.get(id=contact_id)
-    contact.is_deleted = True
+    if request.method == "POST":
+        contact = Contact.objects.get(id=contact_id)
+        contact.is_deleted = True
 
-    contact.save()
+        contact.save()
+        
     return HttpResponseRedirect(reverse('contacts:index'))

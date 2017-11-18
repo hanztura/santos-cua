@@ -6,10 +6,45 @@
 
 {% block nav %}
     {{ block.super }}
-    <a class="nav-item nav-link" href="{% url 'contacts:new' %}">New Contact</a>
-    <a class="nav-item nav-link" href="{% url 'employees:new' contact.id %}">New Employee</a>
-    <a class="nav-item nav-link" href="{% url 'contacts:destroy' contact.id %}">Delete</a>
-    <a class="nav-item nav-link" href="{% url 'contacts:index' %}">List</a>
+
+    <!-- list -->
+    <a class="nav-item nav-link" href="{% url 'contacts:index' %}">
+        <i class="fa fa-2x fa-list-ul" title="Contacts"></i>
+    </a>
+
+    <!-- delete -->
+    <form id='id-form-delete' action="{% url 'contacts:destroy' contact.id %}" method="post">
+
+        {% csrf_token %}
+        <button form='id-form-delete' class="action-delete btn btn-link" type="submit" title="delete">
+            <i class="fa fa-2x fa-trash text-danger" ></i>
+        </button>
+        
+    </form>
+
+    <!-- new contact -->
+    <a class="nav-item nav-link text-success" href="{% url 'contacts:new' %}">
+        <span title="New Contact">
+            <i class="fa fa-1x fa-plus"></i>
+            <i class="fa fa-2x fa-address-book-o"></i>
+        </span>
+    </a>
+
+    <!-- new employee -->
+    <a class="nav-item nav-link text-success" href="{% url 'employees:new' contact.id %}">
+        <span title="New Employee">
+            <i class="fa fa-1x fa-plus"></i>
+            <i class="fa fa-2x fa-usd"></i>
+        </span>
+    </a>
+
+    <!-- new client -->
+    <a class="nav-item nav-link text-success" href="{% url 'compliance:client_new' contact.id %}">
+        <span title="New Client">
+            <i class="fa fa-1x fa-plus"></i>
+            <i class="fa fa-2x fa-briefcase"></i>
+        </span>
+    </a>
 {% endblock nav %}
 
 {% block head %}
@@ -44,29 +79,29 @@
     <form enctype="multipart/form-data" action="{% url 'contacts:update' contact.id %}" method="post" class="form">
         {% csrf_token %}
 
-<div class="panel-group">
-    <div class="panel panel-default">
-        <a data-toggle="collapse" href="#id-div-contact" aria-expanded="true">
-            <div class="panel-heading bg-inverse color-gray">
-                <h4 class="panel-title">
-                    Contact Info
-                </h4>
-            </div>
-            
-        </a>
-    <div id="id-div-contact" aria-expanded="true" class="collapse show" >
-        <div class="panel-body">
-            <table class="table table-condensed table-bordered" id="id-table-contact">
-                <!-- <caption>Contact</caption> -->
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <a data-toggle="collapse" href="#id-div-contact" aria-expanded="true">
+                <div class="panel-heading bg-inverse color-gray">
+                    <h4 class="panel-title">
+                        Contact Info
+                    </h4>
+                </div>
+                
+            </a>
+        <div id="id-div-contact" aria-expanded="true" class="collapse show" >
+            <div class="panel-body">
+                <table class="table table-condensed table-bordered" id="id-table-contact">
+                    <!-- <caption>Contact</caption> -->
 
-                <tbody>
-                    {{ form.as_table|lower }}
-                </tbody>
-            </table>
+                    <tbody>
+                        {{ form.as_table|lower }}
+                    </tbody>
+                </table>
+            </div>
+        </div>
         </div>
     </div>
-    </div>
-</div>
 
     <!-- Phone -->
     <div class="panel-group">
@@ -245,7 +280,7 @@
         </div>
     </div>
 
-        <input type="submit" value="Update" id='id-bottom'>
+        <input class="action-save btn btn-success btn-block" type="submit" value="Save" id='id-bottom'>
     </form>
 {% endblock content %}
 

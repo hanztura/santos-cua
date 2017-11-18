@@ -18,13 +18,15 @@ class Contact(models.Model):
 	last_name = models.CharField(max_length=50, null=True, blank=True)
 	middle_name = models.CharField(max_length=50, blank=True, null=True)
 	alias = models.CharField(max_length=50, null=False, blank=False)
-	tax_num = models.CharField(max_length=20, null=True)
+	tax_num = models.CharField(max_length=12, unique=True, null=True, blank=True)
 	ss_num = models.CharField(max_length=20, blank=True, null=True)
 	health_num = models.CharField(max_length=20, blank=True, null=True)
 	hdmf_num = models.CharField(max_length=20, blank=True, null=True)
 	date_of_birth = models.DateField()
 	is_client = models.BooleanField(null=False, default=False)
+	is_employee = models.BooleanField(null=False, default=False)
 	is_deleted = models.BooleanField(default=False)
+	vip_alias = models.CharField(max_length=10, null=True, blank=True)
 
 	
 	def __str__(self):
