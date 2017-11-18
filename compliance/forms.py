@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Client, ClientPractitioner
+from .models import Client, ClientPractitioner, BirCompliance
 
 
 class ClientForm(forms.ModelForm):
@@ -15,12 +15,20 @@ class ClientForm(forms.ModelForm):
             'date_end': forms.SelectDateWidget(years=year_list),
         }
 
-
 PractitionerFormSet = forms.inlineformset_factory(
     Client,
     ClientPractitioner,
     fields=[
         'employee', 'date_assigned', 'date_transferred', 'remarks'
+    ],
+    extra=1,
+)
+
+BIRComplianceFormSet = forms.inlineformset_factory(
+    Client,
+    BirCompliance,
+    fields=[
+        'bir_form', 'is_active',
     ],
     extra=1,
 )

@@ -1,6 +1,6 @@
 {% extends "../base.html" %}
 
-{% block title %}Clients{% endblock title %}
+{% block title %}Compliance Engagements{% endblock title %}
 
 {% block nav %}
     {{ block.super }}
@@ -29,7 +29,7 @@
 {% endblock head %}
 
 {% block content %}
-     <h1 class="">Clients - List</h1>
+     <h1 class="">Engagement - List</h1>
 
     {% if client_list %}
         <!-- list -->
@@ -37,6 +37,7 @@
             <table class="table table-condensed table-bordered table-hover table-striped color-black">
                 <thead class="table-inverse">
                     <tr class="text-capitalize ">
+                        <th class="text-center ">series#</th>
                         <th class="text-center " colspan="2">contact</th>
                         <th class="text-center ">line of business</th>
                         <th class="text-center ">actions</th>
@@ -44,6 +45,10 @@
                 </thead>
                     {% for client in client_list %}
                         <tr>
+
+                            <!-- series -->
+                            <td class="text-center">{{client.doc_ref}}</td>
+
                             <!-- client image -->
                             <td class="text-center">
                                 <a href="{% url 'compliance:client_detail' client.id %}"  title="view {{client.contact.alias}}">

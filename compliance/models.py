@@ -11,6 +11,7 @@ from django.utils import timezone
 
 
 class Client(models.Model):
+
     line_of_business_choices = [
         (1, 'OTHER TELECOMMUNICATION'),
         (2, 'OTHER WHOLESALING'),
@@ -18,6 +19,7 @@ class Client(models.Model):
         (4, 'OTHER RETAIL SALE IN SPECIALIZED STORES'),
     ]
 
+    engagement_series_num = models.IntegerField(null=True, blank=True, editable=False)
     contact = models.ForeignKey(Contact, verbose_name='client')
     rdo = models.ForeignKey(Rdo)
     line_of_business = models.IntegerField(
@@ -56,11 +58,35 @@ class Client(models.Model):
 
         return '-'
 
+    @property
+    def doc_ref(self):
+        if (not ((self.engagement_series_num == None) or (self.date_start == None))):
+            series = self.engagement_series_num
+            year = str(self.date_start.year)
+            prefix = 'EC'
+
+            # add trailing zeroes to series
+            series = str(100000 + series)[1:]
+
+            ret = '-'.join([prefix, year,series])
+
+        else:
+            ret = '---'
+
+        return ret
+    @property
+    def assigned(self):
+        ret = '---'
+        if (self.practitioners):
+            ret = self.practitioners.first()
+        return ret
+
 
 class ClientPractitioner(models.Model):
     """docstring for ClientPractitioner"""
     class Meta:
         verbose_name = 'Practitioner'
+        ordering = ['-date_assigned',]
             
     client = models.ForeignKey(Client)
     employee = models.ForeignKey(Employee)
@@ -88,6 +114,7 @@ class BirCompliance(models.Model):
         ret = str(self.client.contact.alias) + ' | ' + str(self.bir_form.form_code)
         return ret
 
+
 class BirDeadline(models.Model):
     """docstring for ClassName"""
     class Meta:
@@ -95,9 +122,6 @@ class BirDeadline(models.Model):
 
 
     compliance = models.ForeignKey(BirCompliance)
-    # month = models.IntegerField(null=False, blank=False)
-    # day = models.IntegerField(null=False, blank=False)
-    # year = models.IntegerField(null=False, blank=False)
     date_deadline = models.DateField(null=False, blank=False, default=timezone.now, verbose_name='deadline')
     date_notify_start = models.DateField(null=False, blank=False, verbose_name='notification starts on')
 
@@ -105,18 +129,22 @@ class BirDeadline(models.Model):
         ret = ' | '.join([str(self.compliance), str(self.date_deadline)])
         return ret
 
+
 class DeadlineStatus(models.Model):
     """docstring for ClassName"""
+
+
     class Meta:
         verbose_name_plural = 'Deadline Status'
+    
+
     status_choices = [
-        (1, 'Created'),
-        (2, 'Working'),
-        (3, 'Done'),
-        (4, 'Filing'),
-        (5, 'Verifying'),
-        (6, 'Paid'),
-        (7, 'Done'),
+        (1, 'Working'),
+        (2, 'Drafted'),
+        (3, 'Filing'),
+        (4, 'Verification'),
+        (5, 'Paid'),
+        (6, 'Done'),
     ]
 
     bir_deadline = models.ForeignKey(BirDeadline)
@@ -127,8 +155,25 @@ class DeadlineStatus(models.Model):
         choices=status_choices
     )
     as_of = models.DateTimeField(default=timezone.now, null=False,)
+    remarks = models.CharField(max_length=100, null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
 
     @property
     def get_client(self):
         ret = str(self.bir_deadline.compliance.client)
         return ret
+
+    @property
+    def get_status_verbose(self):
+        status = self.status
+        if (not status):
+            return '-'
+            
+        for k,v in self.status_choices:
+            if (status == k):
+                return v
+                break
+            continue
+
+        return '-'
+

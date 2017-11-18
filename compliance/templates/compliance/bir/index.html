@@ -1,11 +1,171 @@
-{% extends "./base.html" %}
+{% extends "../base.html" %}
+
+{% block title %}BIR Deadlines{% endblock title %}
+
+{% block nav %}
+    {{ block.super }}
+{% endblock nav %}
+
+{% block head %}
+    <style type="text/css">
+        .model-icon{
+            font-size: 40px;
+            color: black;
+        }
+        .pager li.active > a, .pager li.active > span{
+            color: #fff;
+            background-color:#212121;
+            border-color: #212121;
+            pointer-events:none;
+        }
+        .actions-toggle-icons{
+            font-size: 25px;
+        }
+    </style>
+{% endblock head %}
 
 {% block content %}
-    <h1>Home</h1>
+     <h1 class="">BIR Deadline - List</h1>
 
-    <ul>
-        <li><a href="{% url 'compliance:client_index' %}">Clients</a></li>
-        <li><a href="{% url 'compliance:bir_index' %}">BIR</a></li>
-        <li><a href="{% url 'compliance:deadline_index' %}">Deadlines</a></li>
-    </ul>
+    {% if bir_list %}
+        <!-- list -->
+        <div class="container">
+            <table class="table table-condensed table-bordered table-hover table-striped color-black">
+                <thead class="table-inverse">
+                    <tr class="text-capitalize ">
+                        <th class="text-center " rowspan="2">date</th>
+                        <th class="text-center " rowspan="2">compliance</th>
+                        <th class="text-center " colspan="3">engagement</th>
+                        <th class="text-center " rowspan="2">actions</th>
+                    </tr>
+                    <tr class="text-capitalize text-sm">
+                        <th class="text-center ">ref#</th>
+                        <th class="text-center ">client</th>
+                        <th class="text-center ">assigned</th>
+                    </tr>
+                </thead>
+                    {% for deadline in bir_list %}
+                        <tr>
+                            <!-- date -->
+                            <td class="text-center ">
+                                {{deadline.date_deadline}}
+                            </td>
+
+                            <!-- compliance -->
+                            <td class="text-center ">
+                                {{deadline.compliance.bir_form}}
+                            </td>
+
+                            <!-- engagement doc_ref -->
+                            <td>
+                                <a class="color-black" href="{% url 'compliance:client_detail' deadline.compliance.client.id%}">
+                                    <u>{{deadline.compliance.client.doc_ref}}</u>
+                                </a>
+                            </td>
+
+                            <!-- engagement client -->
+                            <td>
+                                {{deadline.compliance.client|title}}
+                            </td>
+
+                            <!-- engagement practitioner -->
+                            <td class="text-center">
+                                {{deadline.compliance.client.assigned.abbr|upper}}
+                            </td>
+
+                            <!-- actions -->
+                            <td class="text-center">
+
+                                <a class="btn btn-outline-default action-toggle-buttons" data-toggle="collapse" href="#id-table-actions-{{forloop.counter}}" aria-expanded="false" aria-controls="id-table-actions-{{forloop.counter}}">
+                                  <i class="fa fa-angle-double-down actions-toggle-icons"></i>
+                                </a>
+
+                                <div class="collapse" id="id-table-actions-{{forloop.counter}}">
+                                  <div class="card card-block">
+
+                                    <form id='id-form-delete-{{forloop.counter}}' action="{% url 'compliance:bir_destroy' deadline.id %}" method="post">
+
+                                        {% csrf_token %}
+                                        <button form='id-form-delete-{{forloop.counter}}' class="action-delete btn btn-outline-danger" type="submit" title="delete">
+                                            <i class="fa fa fa-trash-o" ></i>
+                                        </button>
+                                    </form> <!-- delete -->
+
+                                  </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    
+    <!-- pagination -->
+    <nav aria-label="Client index navigation">
+        <ul class="pagination pagination-lg justify-content-center">
+            {% if bir_list.has_previous %}
+                <li class="previous  page-item ">
+                    <a class="page-link" href="?page={{ bir_list.previous_page_number }}"><i class="fa fa-angle-left icon-label" title="previous"></i></a>
+                </li>
+            {% endif %}
+            {% ifequal bir_list.has_previous False %}
+                <li class='disabled previous page-item '>
+                    <span class="page-link"><i class="fa fa-angle-left icon-label" title="previous"></i></span>
+                </li>
+            {% endifequal %}
+
+            {% with ''|center:bir_list.paginator.num_pages as range %}
+                {% for _ in range %}
+                    {% ifequal bir_list.number forloop.counter%}
+                        <li class="active page-item">
+                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                        </li>
+                    {% endifequal %}
+                    {% ifnotequal bir_list.number forloop.counter%}
+                        <li class=" page-item">
+                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                        </li>
+                    {% endifnotequal %}
+                {% endfor %}
+            {% endwith %}
+
+            {% if bir_list.has_next %}
+                <li class="next page-item">
+                    <a class="page-link" href="?page={{ bir_list.next_page_number }}"><i class="fa fa-angle-right icon-label" title="next"></i></a>
+                </li>
+            {% endif %}
+            {% ifequal bir_list.has_next False %}
+                <li class='page-item disabled'>
+                    <span class="page-link"><i class="fa fa-angle-right icon-label" title="next"></i></span>
+                </li>
+            {% endifequal %}
+        </ul>
+    </nav>  
 {% endblock content %}
+
+{% block script %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.action-deactivate').click(function(e){
+                if (!confirm('Deactivate?')) {
+                    e.preventDefault()
+                    return
+                }
+            })
+
+            $('.action-activate').click(function(e){
+                if (!confirm('Activate?')) {
+                    e.preventDefault()
+                    return
+                }
+            })
+
+            $('.action-toggle-buttons').click(function(){
+                $(this).toggle()
+            })
+        })
+    </script>
+{% endblock script %}
