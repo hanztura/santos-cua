@@ -29,6 +29,7 @@ def index(request):
 
     context = {
         'employee_list': employees,
+        'page': page,
     }
 
     return render(request, 'employees/index.html', context)

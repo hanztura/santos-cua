@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'bir.apps.BirConfig',
     'compliance.apps.ComplianceConfig',
     'public.apps.PublicConfig',
+    'events.apps.EventsConfig',
     
 ]
 

@@ -1,0 +1,174 @@
+{% extends "./base.html" %}
+
+{% block title %}Contacts{% endblock title %}
+
+{% block nav %}
+    {{ block.super }}
+    <!-- new -->
+    <a class="nav-item nav-link" href="{% url 'contacts:new' %}">
+        <i class="fa fa-2x fa-plus text-success" title="New"></i>
+    </a>
+{% endblock nav %}
+
+{% block head %}
+    <style type="text/css">
+        .contact-icon{
+            font-size: 40px;
+            color: black;
+        }
+        .pager li.active > a, .pager li.active > span{
+            color: #fff;
+            background-color:#212121;
+            border-color: #212121;
+            pointer-events:none;
+        }
+    </style>
+{% endblock head %}
+
+{% block content %}
+     <h1 class="">Contacts - List</h1>
+
+    {% if contact_list %}
+        <!-- list -->
+        <div class="container">
+            <!-- pagination top -->  
+            <nav class="row col-12" aria-label="Contact table navigation">
+                <div class="pagination row col-10 flex-center child-borders text-center">
+                    <!-- previous -->
+                        {% ifequal contact_list.has_previous False %}
+                            <div class='sm-1 col disabled border border-primary'>
+                                <span class=""><i class="fa fa-angle-left icon-label" title="previous"></i></span>
+                            </div>
+                        {% endifequal %}
+                        {% if contact_list.has_previous %}
+                            <div class="sm-1 col border border-primary ">
+                                <a class="" href="?page={{ contact_list.previous_page_number }}"><i class="fa fa-angle-left icon-label" title="previous"></i></a>
+                            </div>
+                        {% endif %}
+
+                    <!-- page numbers -->
+                        {% with ''|center:contact_list.paginator.num_pages as range %}
+                            {% for _ in range %}
+                                {% ifequal contact_list.number forloop.counter%}
+                                    <div class="sm-1 col border border-primary bg-primary ">
+                                        <a class="" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                                    </div>
+                                {% endifequal %}
+                                {% ifnotequal contact_list.number forloop.counter%}
+                                    <div class="sm-1 col border border-primary ">
+                                        <a class="" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                                    </div>
+                                {% endifnotequal %}
+                            {% endfor %}
+                        {% endwith %}
+
+                    <!-- next -->
+                        {% if contact_list.has_next %}
+                            <div class="sm-1 col border border-primary ">
+                                <a class="" href="?page={{ contact_list.next_page_number }}"><i class="fa fa-angle-right icon-label" title="next"></i></a>
+                            </div>
+                        {% endif %}
+                        {% ifequal contact_list.has_next False %}
+                            <div class='sm-1 col border border-primary  disabled'>
+                                <span class=""><i class="fa fa-angle-right icon-label" title="next"></i></span>
+                            </div>
+                        {% endifequal %}
+                </div>
+                <div class="col-2">
+                    <p>Showing {{contact_list.number}} of {{contact_list.paginator.num_pages}}</p>
+                </div>
+            </nav>
+
+            <!-- contact cards -->
+            <div class="row flex-spaces"> 
+
+            {% for contact in contact_list %}          
+              <div class="card col-5" style="width: 20rem;">
+                    <div class="text-center">
+                        
+                        <img class="text-center" src="/media/{{contact.image }}" width="150px" height="200px" alt="{{contact.alias}} image">
+                    </div>
+
+                  <div class="card-body" >
+                    <h4 class="card-title">
+                        <a class="color-black" href="{% url 'contacts:detail' contact.id %}"  title="view {{contact.alias}}">
+                            {{contact|title}}
+                        </a>
+                    </h4>
+
+                    <h5 class="card-subtitle"><small>TIN: </small>{{contact.tax_num}}</h5>
+                    <p class="card-text">Notice that the card width in this example have been set to 20rem, otherwise it will try to fill the current container/row where the card is.</p>
+                        <form id='id-form-delete-{{forloop.counter}}' action="{% url 'contacts:destroy' contact.id %}" method="post">
+
+                            {% csrf_token %}
+                            <button form='id-form-delete-{{forloop.counter}}' class="action-delete btn btn-outline-danger" type="submit" title="delete">
+                                <i class="fa fa fa-trash-o" ></i>
+                            </button>
+                            
+                        </form>
+                  </div>
+                </div>              
+            
+            {% endfor %}
+                
+            </div>
+
+            <!-- pagination bottom -->  
+            <nav class="col-12" aria-label="Contact table navigation" id='id-bottom'>
+                <div class="pagination row col-12 flex-center child-borders text-center">
+                    <!-- previous -->
+                        {% ifequal contact_list.has_previous False %}
+                            <div class='sm-1 col disabled border border-primary'>
+                                <span class=""><i class="fa fa-angle-left icon-label" title="previous"></i></span>
+                            </div>
+                        {% endifequal %}
+                        {% if contact_list.has_previous %}
+                            <div class="sm-1 col border border-primary ">
+                                <a class="" href="?page={{ contact_list.previous_page_number }}"><i class="fa fa-angle-left icon-label" title="previous"></i></a>
+                            </div>
+                        {% endif %}
+
+                    <!-- page numbers -->
+                        {% with ''|center:contact_list.paginator.num_pages as range %}
+                            {% for _ in range %}
+                                {% ifequal contact_list.number forloop.counter%}
+                                    <div class="sm-1 col border border-primary ">
+                                        <a class="" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                                    </div>
+                                {% endifequal %}
+                                {% ifnotequal contact_list.number forloop.counter%}
+                                    <div class="sm-1 col border border-primary ">
+                                        <a class="" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                                    </div>
+                                {% endifnotequal %}
+                            {% endfor %}
+                        {% endwith %}
+
+                    <!-- next -->
+                        {% if contact_list.has_next %}
+                            <div class="sm-1 col border border-primary ">
+                                <a class="" href="?page={{ contact_list.next_page_number }}"><i class="fa fa-angle-right icon-label" title="next"></i></a>
+                            </div>
+                        {% endif %}
+                        {% ifequal contact_list.has_next False %}
+                            <div class='sm-1 col border border-primary  disabled'>
+                                <span class=""><i class="fa fa-angle-right icon-label" title="next"></i></span>
+                            </div>
+                        {% endifequal %}
+                </div>
+            </nav>
+
+        </div>
+    {% endif %}
+    
+{% endblock content %}
+{% block script %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('.action-toggle-buttons').click(function(){
+                $(this).toggle()
+            })
+        })
+    </script>
+{% endblock script %}

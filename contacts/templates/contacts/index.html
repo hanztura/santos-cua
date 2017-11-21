@@ -31,57 +31,81 @@
     {% if contact_list %}
         <!-- list -->
         <div class="container">
-            <table class="table table-condensed table-bordered table-hover table-striped color-black">
+            <!-- pagination top -->  
+            <nav aria-label="Contact table navigation">
+                <ul class="pagination pagination-lg justify-content-center">
+                    {% if contact_list.has_previous %}
+                        <li class="previous  page-item ">
+                            <a class="page-link" href="?page={{ contact_list.previous_page_number }}"><i class="fa fa-angle-left icon-label" title="previous"></i></a>
+                        </li>
+                    {% endif %}
+                    {% ifequal contact_list.has_previous False %}
+                        <li class='disabled previous page-item '>
+                            <span class="page-link"><i class="fa fa-angle-left icon-label" title="previous"></i></span>
+                        </li>
+                    {% endifequal %}
+
+                    {% with ''|center:contact_list.paginator.num_pages as range %}
+                        {% for _ in range %}
+                            {% ifequal contact_list.number forloop.counter%}
+                                <li class="active page-item">
+                                    <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                                </li>
+                            {% endifequal %}
+                            {% ifnotequal contact_list.number forloop.counter%}
+                                <li class=" page-item">
+                                    <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                                </li>
+                            {% endifnotequal %}
+                        {% endfor %}
+                    {% endwith %}
+
+                    {% if contact_list.has_next %}
+                        <li class="next page-item">
+                            <a class="page-link" href="?page={{ contact_list.next_page_number }}"><i class="fa fa-angle-right icon-label" title="next"></i></a>
+                        </li>
+                    {% endif %}
+                    {% ifequal contact_list.has_next False %}
+                        <li class='page-item disabled'>
+                            <span class="page-link"><i class="fa fa-angle-right icon-label" title="next"></i></span>
+                        </li>
+                    {% endifequal %}
+                </ul>
+            </nav>
+
+            <table class="table-condensed child-borders table-hover table-striped color-black">
                 <thead class="table-inverse">
                     <tr class="text-capitalize text-center">
-                        <th class="text-center" colspan="2">contact</th>
+                        <th class="text-center" colspan="1">contact</th>
                         <th class="text-center text-uppercase">tin</th>
                         <th class="text-center">actions</th>
                     </tr>
                 </thead>
                     {% for contact in contact_list %}
-                        <tr>
-                            <td class="text-center">
-                                <a href="{% url 'contacts:detail' contact.id %}"  title="view {{contact.alias}}">
-                                    {% if contact.image %}
-                                        <img src="/media/{{ contact.image }}" width="50px" height="50px" class="img-thumbnail">
-                                                                        
-                                    {% endif %}
-                                    
-                                    {% if not contact.image %}
-                                        {% ifequal contact.entity_type 1 %}
-                                            <i class="fa fa-user-circle contact-icon"></i>                                     
-                                        {% endifequal %}
+                        <tr class=" child-borders">
+                                <td class="">
+                                    <a class="color-black" href="{% url 'contacts:detail' contact.id %}"  title="view {{contact.alias}}">
+                                        {% if contact.is_deleted %}
+                                            <s>{{contact|title}}</s>
+                                        {% endif %}
+                                        {% if not contact.is_deleted %}
+                                            <u>{{contact|title}}</u>
+                                        {% endif %}
                                         
-                                        {% ifequal contact.entity_type 2 %}
-                                            <i class="fa fa-building contact-icon"></i>                                     
-                                        {% endifequal %}
+                                    </a>
+                                    <!-- badges here -->
+                                    {% if contact.is_client %}
+                                        <span class="badge warning">Client</span>
                                     {% endif %}
-                                </a>
-                            </td> 
-                            <td>
-                                <a class="color-black" href="{% url 'contacts:detail' contact.id %}"  title="view {{contact.alias}}">
-                                    {% if contact.is_deleted %}
-                                        <s>{{contact|title}}</s>
-                                    {% endif %}
-                                    {% if not contact.is_deleted %}
-                                        <u>{{contact|title}}</u>
-                                    {% endif %}
-                                    
-                                </a>
-                                <!-- badges here -->
-                                {% if contact.is_client %}
-                                    <span class="badge badge-pill badge-warning">Client</span>
-                                {% endif %}
 
-                                {% if contact.is_employee %}
-                                    <span class="badge badge-pill badge-primary">Employee</span>
-                                {% endif %}
+                                    {% if contact.is_employee %}
+                                        <span class="badge secondary">Employee</span>
+                                    {% endif %}
 
-                                {% if contact.vip_alias %}
-                                    <span class="badge badge-pill badge-danger">{{contact.vip_alias|upper}}</span>
-                                {% endif %}
-                            </td> 
+                                    {% if contact.vip_alias %}
+                                        <span class="badge danger">{{contact.vip_alias|upper}}</span>
+                                    {% endif %}
+                                </td> 
 
                             <!-- TIN -->
                             <td class="text-center">
@@ -114,56 +138,54 @@
                             </td>
                         </tr>
                     {% endfor %}
-                <tbody>
-                    
-                </tbody>
             </table>
+
+            <!-- pagination -->  
+            <nav aria-label="Contact table navigation">
+                <ul class="pagination pagination-lg justify-content-center">
+                    {% if contact_list.has_previous %}
+                        <li class="previous  page-item ">
+                            <a class="page-link" href="?page={{ contact_list.previous_page_number }}"><i class="fa fa-angle-left icon-label" title="previous"></i></a>
+                        </li>
+                    {% endif %}
+                    {% ifequal contact_list.has_previous False %}
+                        <li class='disabled previous page-item '>
+                            <span class="page-link"><i class="fa fa-angle-left icon-label" title="previous"></i></span>
+                        </li>
+                    {% endifequal %}
+
+                    {% with ''|center:contact_list.paginator.num_pages as range %}
+                        {% for _ in range %}
+                            {% ifequal contact_list.number forloop.counter%}
+                                <li class="active page-item">
+                                    <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                                </li>
+                            {% endifequal %}
+                            {% ifnotequal contact_list.number forloop.counter%}
+                                <li class=" page-item">
+                                    <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                                </li>
+                            {% endifnotequal %}
+                        {% endfor %}
+                    {% endwith %}
+
+                    {% if contact_list.has_next %}
+                        <li class="next page-item">
+                            <a class="page-link" href="?page={{ contact_list.next_page_number }}"><i class="fa fa-angle-right icon-label" title="next"></i></a>
+                        </li>
+                    {% endif %}
+                    {% ifequal contact_list.has_next False %}
+                        <li class='page-item disabled'>
+                            <span class="page-link"><i class="fa fa-angle-right icon-label" title="next"></i></span>
+                        </li>
+                    {% endifequal %}
+                </ul>
+            </nav>
+
         </div>
     {% endif %}
     
-    <!-- pagination -->
-    <nav aria-label="Contact table navigation">
-        <ul class="pagination pagination-lg justify-content-center">
-            {% if contact_list.has_previous %}
-                <li class="previous  page-item ">
-                    <a class="page-link" href="?page={{ contact_list.previous_page_number }}"><i class="fa fa-angle-left icon-label" title="previous"></i></a>
-                </li>
-            {% endif %}
-            {% ifequal contact_list.has_previous False %}
-                <li class='disabled previous page-item '>
-                    <span class="page-link"><i class="fa fa-angle-left icon-label" title="previous"></i></span>
-                </li>
-            {% endifequal %}
-
-            {% with ''|center:contact_list.paginator.num_pages as range %}
-                {% for _ in range %}
-                    {% ifequal contact_list.number forloop.counter%}
-                        <li class="active page-item">
-                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
-                        </li>
-                    {% endifequal %}
-                    {% ifnotequal contact_list.number forloop.counter%}
-                        <li class=" page-item">
-                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
-                        </li>
-                    {% endifnotequal %}
-                {% endfor %}
-            {% endwith %}
-
-            {% if contact_list.has_next %}
-                <li class="next page-item">
-                    <a class="page-link" href="?page={{ contact_list.next_page_number }}"><i class="fa fa-angle-right icon-label" title="next"></i></a>
-                </li>
-            {% endif %}
-            {% ifequal contact_list.has_next False %}
-                <li class='page-item disabled'>
-                    <span class="page-link"><i class="fa fa-angle-right icon-label" title="next"></i></span>
-                </li>
-            {% endifequal %}
-        </ul>
-    </nav>  
 {% endblock content %}
-
 {% block script %}
     <script type="text/javascript">
         $(document).ready(function(){

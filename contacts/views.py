@@ -28,7 +28,7 @@ def index(request):
         'contact_list': contacts,
     }
 
-    return render(request, 'contacts/index.html', context)
+    return render(request, 'contacts/index_cards.html', context)
 
 def detail(request, contact_id):
     contact = get_object_or_404(Contact, pk=contact_id)
