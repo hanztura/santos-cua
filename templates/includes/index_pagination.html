@@ -1,0 +1,64 @@
+<!-- pagination top -->  
+<nav class="row col-12" aria-label="{{ model_name|title }} table navigation">
+    <div class="pagination row col-xs-12 col-md-9 flex-center child-borders text-center">
+        <!-- previous -->
+            {% ifequal model_list.has_previous False %}
+                <div class='xs-1 sm-1 md-1 col disabled border border-primary'>
+                    <span class=""><i class="fa fa-angle-left icon-label" title="previous"></i></span>
+                </div>
+            {% endifequal %}
+            {% if model_list.has_previous %}
+                <div class="xs-1 sm-1 md-1 col border border-primary ">
+                    <a class="" href="?q={{ q }}&page={{ model_list.previous_page_number }}"><i class="fa fa-angle-left icon-label" title="previous"></i></a>
+                </div>
+            {% endif %}
+
+        <!-- page numbers -->
+            {% with ''|center:model_list.paginator.num_pages as range %}
+                {% for _ in range %}
+                    <!-- if no page OR 1st page -->
+                    {% if not page%}
+                        {% if forloop.first%}
+                            <div class="xs-1 sm-1 md-1 col border border-primary bg-primary ">
+                                <a class="" href="?q={{ q }}&page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                            </div>
+                        {% endif %}
+                        {% if not forloop.first%}
+                            <div class="xs-1 sm-1 md-1 col border border-primary">
+                                <a class="" href="?q={{ q }}&page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if page %}
+                        {% ifequal model_list.number forloop.counter%}
+                            <div class="xs-1 sm-1 md-1 col border border-primary bg-primary ">
+                                <a class="" href="?q={{ q }}&page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                            </div>
+                        {% endifequal %}
+                        {% ifnotequal model_list.number forloop.counter%}
+                            <div class="xs-1 sm-1 md-1 col border border-primary ">
+                                <a class="" href="?q={{ q }}&page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                            </div>
+                        {% endifnotequal %}
+                    {% endif %}
+
+                {% endfor %}
+            {% endwith %}
+
+        <!-- next -->
+            {% if model_list.has_next %}
+                <div class="xs-1 sm-1 md-1 col border border-primary ">
+                    <a class="" href="?q={{ q }}&page={{ model_list.next_page_number }}"><i class="fa fa-angle-right icon-label" title="next"></i></a>
+                </div>
+            {% endif %}
+            {% ifequal model_list.has_next False %}
+                <div class='xs-1 sm-1 md-1 col border border-primary  disabled'>
+                    <span class=""><i class="fa fa-angle-right icon-label" title="next"></i></span>
+                </div>
+            {% endifequal %}
+    </div>
+    <div class="col-3">
+        <small>Showing pages {{model_list.number}} of {{model_list.paginator.num_pages}}</small>
+    </div>
+</nav>

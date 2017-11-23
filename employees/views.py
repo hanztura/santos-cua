@@ -14,10 +14,18 @@ from .forms import EmployeeForm
 
 
 def index(request):
-    employee_list = Employee.objects.order_by('abbr')
+    q = request.GET.get('q')
+    page = request.GET.get('page')
+
+    # if search query is BLANK or NULL
+    if not q:
+        q = ''
+        employee_list = Employee.objects.filter(abbr__contains=q).order_by('abbr')
+    else:
+        employee_list = Employee.objects.filter(abbr__contains=q).order_by('abbr')[:10]
+
     paginator = Paginator(employee_list, 10)
 
-    page = request.GET.get('page')
     try:
         employees = paginator.page(page)
     except PageNotAnInteger:
@@ -30,9 +38,12 @@ def index(request):
     context = {
         'employee_list': employees,
         'page': page,
+        'q': q,
+        'index_url': 'employees:index',
+        'search_placeholder': 'type employee abbr'
     }
 
-    return render(request, 'employees/index.html', context)
+    return render(request, 'employees/index_cards.html', context)
 
 def detail(request, id):
     employee = get_object_or_404(Employee, pk=id)

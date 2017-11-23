@@ -11,10 +11,18 @@ from .forms import ContactForm, PhoneFormSet, AddressFormSet, EmailFormSet
 
 
 def index(request):
-    contact_list = Contact.objects.order_by('alias')
-    paginator = Paginator(contact_list, 10)
-
+    q = request.GET.get('q')
     page = request.GET.get('page')
+
+    if not q:
+        q = ''
+        contact_list = Contact.objects.filter(alias__contains=q).order_by('alias')
+    else:
+        contact_list = Contact.objects.filter(alias__contains=q).order_by('alias')[:10]
+
+    paginator = Paginator(contact_list, 10)
+    
+
     try:
         contacts = paginator.page(page)
     except PageNotAnInteger:
@@ -26,6 +34,10 @@ def index(request):
 
     context = {
         'contact_list': contacts,
+        'page': page,
+        'q': q,
+        'index_url': 'contacts:index',
+        'search_placeholder': 'type contact alias'
     }
 
     return render(request, 'contacts/index_cards.html', context)
@@ -89,65 +101,41 @@ def create(request):
     if request.method == "POST":
         # validate form
         form = ContactForm(request.POST, request.FILES)
-        formset_phone = PhoneFormSet(request.POST)
-        formset_address = AddressFormSet(request.POST)
-        formset_email = EmailFormSet(request.POST)
+        # formset_phone = PhoneFormSet(request.POST)
+        # formset_address = AddressFormSet(request.POST)
+        # formset_email = EmailFormSet(request.POST)
         new_contact = None
         
         context = {
             'form' : form,
-            'formset_phone': formset_phone,
-            'formset_address': formset_address,
-            'formset_email': formset_email
+            # 'formset_phone': formset_phone,
+            # 'formset_address': formset_address,
+            # 'formset_email': formset_email
         }
 
         fail = render(request, 'contacts/new.html', context)
 
         if form.is_valid():
-            # registered_name = form.cleaned_data['registered_name']
-            # first_name = form.cleaned_data['first_name']
-            # last_name = form.cleaned_data['last_name']
-            # middle_name = form.cleaned_data['middle_name']
-            # trade_name = form.cleaned_data['trade_name']
-            # entity_type = form.cleaned_data['entity_type']
-            # alias = form.cleaned_data['alias']
-            # tax_num = form.cleaned_data['tax_num']
-            # ss_num = form.cleaned_data['ss_num']
-            # health_num = form.cleaned_data['health_num']
-            # hdmf_num = form.cleaned_data['hdmf_num']
-
-            # date_of_birth = form.cleaned_data['date_of_birth']
-            # # '-'.join([
-            # #     form.cleaned_data['date_of_birth_year'], 
-            # #     form.cleaned_data['date_of_birth_month'],
-            # #     form.cleaned_data['date_of_birth_day']
-            # # ])
-
-            # is_client = form.cleaned_data['is_client']
-
-            # contact = Contact(entity_type=entity_type, alias=alias, date_of_birth=date_of_birth)
-            # contact.save()
             new_contact = form.save()
-            formset_phone.instance = new_contact
-            formset_address.instance = new_contact
-            formset_email.instance = new_contact
-            # return HttpResponseRedirect(reverse('contacts:detail', args=(contact.id,)))
-
+            # formset_phone.instance = new_contact
+            # formset_address.instance = new_contact
+            # formset_email.instance = new_contact
         
-        if formset_phone.is_valid():
-            formset_phone.save()
-        else:
-            return fail
+        
+        # if formset_phone.is_valid():
+        #     formset_phone.save()
+        # else:
+        #     return fail
 
-        if formset_address.is_valid():
-            formset_address.save()
-        else:
-            return fail
+        # if formset_address.is_valid():
+        #     formset_address.save()
+        # else:
+        #     return fail
             
-        if formset_email.is_valid():
-            formset_email.save()
-        else:
-            return fail
+        # if formset_email.is_valid():
+        #     formset_email.save()
+        # else:
+        #     return fail
 
         return HttpResponseRedirect(reverse('contacts:index'))
 

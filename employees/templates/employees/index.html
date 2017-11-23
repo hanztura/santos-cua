@@ -92,46 +92,7 @@
     {% endif %}
     
     <!-- pagination -->
-    <nav aria-label="Employee index navigation">
-        <ul class="pagination pagination-lg justify-content-center">
-            {% if employee_list.has_previous %}
-                <li class="previous  page-item ">
-                    <a class="page-link" href="?page={{ employee_list.previous_page_number }}"><i class="fa fa-angle-left icon-label" title="previous"></i></a>
-                </li>
-            {% endif %}
-            {% ifequal employee_list.has_previous False %}
-                <li class='disabled previous page-item '>
-                    <span class="page-link"><i class="fa fa-angle-left icon-label" title="previous"></i></span>
-                </li>
-            {% endifequal %}
-
-            {% with ''|center:employee_list.paginator.num_pages as range %}
-                {% for _ in range %}
-                    {% ifequal employee_list.number forloop.counter%}
-                        <li class="active page-item">
-                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
-                        </li>
-                    {% endifequal %}
-                    {% ifnotequal employee_list.number forloop.counter%}
-                        <li class=" page-item">
-                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
-                        </li>
-                    {% endifnotequal %}
-                {% endfor %}
-            {% endwith %}
-
-            {% if employee_list.has_next %}
-                <li class="next page-item">
-                    <a class="page-link" href="?page={{ employee_list.next_page_number }}"><i class="fa fa-angle-right icon-label" title="next"></i></a>
-                </li>
-            {% endif %}
-            {% ifequal employee_list.has_next False %}
-                <li class='page-item disabled'>
-                    <span class="page-link"><i class="fa fa-angle-right icon-label" title="next"></i></span>
-                </li>
-            {% endifequal %}
-        </ul>
-    </nav>  
+    {{% include includes/index_pagination.html %}}
 {% endblock content %}
 
 {% block script %}

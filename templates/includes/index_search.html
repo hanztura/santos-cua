@@ -1,0 +1,12 @@
+
+     <div class="container paper">
+         <form class="form-inline" method="get" action="{% url index_url %}">
+                 {% if q %}
+                    <input type="text" name="q" placeholder="Top results for: '{{ q }}'">
+                 {% endif %}
+                 {% if not q %}
+                    <input type="text" name="q" placeholder="{{ search_placeholder|title }}">
+                 {% endif %}
+                 <input type="submit" value="Search">
+         </form>
+     </div>

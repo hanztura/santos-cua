@@ -1,9 +1,12 @@
-{% extends "../base.html" %}
+{% extends "base_santoscua.html" %}
 
 {% block title %}Compliance Engagements{% endblock title %}
 
 {% block nav %}
     {{ block.super }}
+    <!-- compliance home -->
+    {% include '../home.html' %}
+
     <!-- new -->
     <a class="nav-item nav-link text-success" href="{% url 'compliance:client_new' %}">
         <i class="fa fa-2x fa-plus" title="New"></i>
@@ -30,6 +33,12 @@
 
 {% block content %}
      <h1 class="">Engagement - List</h1>
+
+     <!-- search box -->
+     {% include 'includes/index_search.html' %}
+
+    <!-- pagination -->
+    {% include 'includes/index_pagination.html' with model_list=client_list model_name="clients" %}
 
     {% if client_list %}
         <!-- list -->
@@ -141,48 +150,14 @@
             </table>
         </div>
     {% endif %}
+
+    <!-- if recordset is blank -->
+    {% if not employee_list  %}
+        {% include 'includes/index_no_record.html' %}
+    {% endif %}
     
     <!-- pagination -->
-    <nav aria-label="Client index navigation">
-        <ul class="pagination pagination-lg justify-content-center">
-            {% if client_list.has_previous %}
-                <li class="previous  page-item ">
-                    <a class="page-link" href="?page={{ client_list.previous_page_number }}"><i class="fa fa-angle-left icon-label" title="previous"></i></a>
-                </li>
-            {% endif %}
-            {% ifequal client_list.has_previous False %}
-                <li class='disabled previous page-item '>
-                    <span class="page-link"><i class="fa fa-angle-left icon-label" title="previous"></i></span>
-                </li>
-            {% endifequal %}
-
-            {% with ''|center:client_list.paginator.num_pages as range %}
-                {% for _ in range %}
-                    {% ifequal client_list.number forloop.counter%}
-                        <li class="active page-item">
-                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
-                        </li>
-                    {% endifequal %}
-                    {% ifnotequal client_list.number forloop.counter%}
-                        <li class=" page-item">
-                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
-                        </li>
-                    {% endifnotequal %}
-                {% endfor %}
-            {% endwith %}
-
-            {% if client_list.has_next %}
-                <li class="next page-item">
-                    <a class="page-link" href="?page={{ client_list.next_page_number }}"><i class="fa fa-angle-right icon-label" title="next"></i></a>
-                </li>
-            {% endif %}
-            {% ifequal client_list.has_next False %}
-                <li class='page-item disabled'>
-                    <span class="page-link"><i class="fa fa-angle-right icon-label" title="next"></i></span>
-                </li>
-            {% endifequal %}
-        </ul>
-    </nav>  
+    {% include 'includes/index_pagination.html' with model_list=client_list model_name="clients" %}
 {% endblock content %}
 
 {% block script %}

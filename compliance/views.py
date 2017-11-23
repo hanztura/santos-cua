@@ -23,10 +23,17 @@ class ComplianceViews():
 class ClientViews():
     """View functions of Client sub-app"""
     def index(request):
-        client_list = Client.objects.all()
+        q = request.GET.get('q')
+        page = request.GET.get('page')
+
+        if not q:
+            q = ''
+            client_list = Client.objects.filter(contact__alias__contains=q).order_by('date_start')
+        else:
+            client_list = Client.objects.filter(contact__alias__contains=q).order_by('date_start')[:10]
+
         paginator = Paginator(client_list, 25)
 
-        page = request.GET.get('page')
         try:
             client = paginator.page(page)
         except PageNotAnInteger:
@@ -38,6 +45,10 @@ class ClientViews():
 
         context = {
             'client_list': client,
+            'page': page,
+            'q': q,
+            'index_url': 'compliance:client_index',
+            'search_placeholder': 'type client alias'
         }
 
         return render(request, 'compliance/clients/index.html', context)

@@ -1,18 +1,14 @@
 {% extends "base_santoscua.html" %}
 
-{% block title %}Contacts{% endblock title %}
+{% block title %}Employees{% endblock title %}
 
 {% block nav %}
     {{ block.super }}
-    <!-- new -->
-    <a class="nav-item nav-link" href="{% url 'contacts:new' %}">
-        <i class="fa fa-2x fa-plus text-success" title="New"></i>
-    </a>
 {% endblock nav %}
 
 {% block head %}
     <style type="text/css">
-        .contact-icon{
+        .model-icon{
             font-size: 40px;
             color: black;
         }
@@ -30,55 +26,54 @@
 {% endblock head %}
 
 {% block content %}
-     <h1 class="">Contacts - List</h1>
+    
+    <h1 class="">Employees - List</h1>
+    <!-- search box -->
+    {% include 'includes/index_search.html' %}
 
-     <!-- search box -->
-     {% include 'includes/index_search.html' %}
-
-    {% if contact_list %}
+    {% if employee_list %}
         <!-- list -->
         <div class="container">
-
             <!-- pagination top -->
-            {% include 'includes/index_pagination.html' with model_list=contact_list model_name='contacts'%}
-            
-            <!-- contact cards -->
+            {% include 'includes/index_pagination.html' with model_list=employee_list model_name='employees' %}
+
+            <!-- employee cards -->
             <div class="row flex-spaces"> 
 
-            {% for contact in contact_list %}          
+            {% for employee in employee_list %}          
               <div class="card" style="width: 20rem;">
 
+                <!-- badges here -->
                 <div class="card-header">
-                    {% if contact.is_client %}
-                        <span class="badge warning">Client</span>
+                    <span>{{ employee.abbr|upper }}</span>
+                    {% if not employee.date_resigned %}
+                        <span class="badge success">Active</span>
                     {% endif %}
-
-                    {% if contact.is_employee %}
-                        <span class="badge secondary">Employee</span>
-                    {% endif %}
-
-                    {% if contact.vip_alias %}
-                        <span class="badge danger">{{contact.vip_alias|upper}}</span>
+                    {% if employee.date_resigned %}
+                        <span class="badge default">Resigned</span>
                     {% endif %}
                 </div>
 
-                    <img class="text-center img-avatar" src="/media/{{contact.image }}" width="150px" height="
-    200px" alt="{{contact.alias}} image">
+                    <img class="text-center img-avatar" src="/media/{{employee.contact.image }}" width="150px" height="200px" alt="{{employee.contact.alias}} image">
 
                   <div class="card-body" >
                     <h4 class="card-title">
-                        <a class="color-black" href="{% url 'contacts:detail' contact.id %}"  title="view {{contact.alias}}">
-                            {{contact|title}}
+                        <a class="color-black action-detail" data-action-alias="{{ employee.abbr|upper }}" href="{% url 'employees:detail' employee.id %}"  title="view {{employee.abbr}}">
+                            {{employee.contact|title}}
                         </a>
                     </h4>
 
-                    <h5 class="card-subtitle"><small>TIN: </small>{{contact.tax_num}}</h5>
-                    <p class=" card-text">Notice that the card width in this example have been set to 20rem, otherwise it will try to fill the current container/row where the card is.</p>
+                    <!-- <h5 class="card-subtitle"></h5> -->
+                    <!-- <p class="card-text"><span class="badge default">ID</span>{{employee.id_num}}</p> -->
+                    <p class=" card-text">
+                        <span class="badge default">ID</span><span>{{employee.id_num}}</span><br>
+                        <span class="badge default">Hired</span><span>{{ employee.date_hired }}</span><br>
+                    </p>
                         
                   </div>  <!-- card body -->
 
                     <div class="card-footer">
-                        <form id='id-form-delete-{{forloop.counter}}' action="{% url 'contacts:destroy' contact.id %}" method="post">
+                        <form id='id-form-delete-{{forloop.counter}}' action="{% url 'employees:destroy' employee.id %}" method="post">
 
                             {% csrf_token %}
                             <button form='id-form-delete-{{forloop.counter}}' class="action-delete btn btn-outline-danger" type="submit" title="delete">
@@ -95,18 +90,17 @@
                 
             </div>
 
-            <!-- pagination bottom -->
-            {% include 'includes/index_pagination.html' with model_list=contact_list model_name='contacts'%}
-
-        </div>
+            <!-- pagination bottom --> 
+            {% include 'includes/index_pagination.html' with model_list=employee_list model_name='employees' %}
     {% endif %}
-     
+
     <!-- if recordset is blank -->
     {% if not employee_list  %}
         {% include 'includes/index_no_record.html' %}
     {% endif %}
-    
+
 {% endblock content %}
+
 {% block script %}
     <script type="text/javascript">
         $(document).ready(function(){

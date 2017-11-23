@@ -1,13 +1,135 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>{% block title %}{% endblock title %} | SantosCua</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4.0.0-alpha.6-dist/css/bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome-4.7.0/css/font-awesome.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/paper.css' %}">
+    <style type="text/css">
+        .btn-page-top-bottom{
+             position:fixed;
+             bottom:0;
+             right:0;
+        }
+        .color-black{
+            color: black;
+        }
+        .color-white{
+            color: white;
+        }
+        .color-black{
+            color: #212121;
+        }
+        .color-gray{
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .icon-actions{
+            font-size: 30px;
+        }
+        .icon-label{
+            font-size: 20px;
+        }
+        .bg-black{
+            background-color: #212121;
+        }
+    </style>
+    {% block head %}{% endblock head %}
 </head>
 <body>
-    <div>
-        {% block content %}
-            <p>Soon to rise...</p>
-        {% endblock content %}
+
+    <nav class="navbar sticky-top navbar-toggleable-md navbar-inverse bg-inverse container-fluid">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+        <div class="row col-12 align-bottom text-left">
+            <!-- brand -->
+              <div class="col-2">
+                <a class="navbar-brand text-warning" href="http://www.santos-cua.com" target="_blank">
+                    SantosCuaAAC
+                </a>
+              </div>
+
+              <!-- links -->
+              <div class="col-10 collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="col-6 navbar-nav">
+                    <!-- home -->
+                    <a class="nav-item nav-link text-info" href="{% url 'public:home' %}">
+                        <i class="fa fa-2x fa-home" title="Home"></i>
+                    </a>
+
+                      {% block nav %}
+
+                      {% endblock nav %}            
+                </div>
+                <!-- nav description -->
+                <div class="col-6">
+                    <span class="navbar-text">
+                      <small>
+                          <p><i>Constant Reinvention…Relentless Innovation…Endless Improvement…</i></p>
+                      </small>
+                    </span>
+                    
+                </div>
+              </div>
+
+                
+        </div>
+    </nav>
+
+
+    <div class="container" id='id-top'>
+
+        <div class="container-fluid content">
+            {% block content %}
+                <p>Soon to rise...</p>
+            {% endblock content %}
+        </div>
+        
+        <div class="btn-page-top-bottom">
+            <a href="#id-top"><i class="fa fa-arrow-up color-black"></i></a>
+            <a href="#id-bottom"><i class="fa fa-arrow-down color-black"></i></a>
+        </div>
     </div>
+
+    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bootstrap-4.0.0-alpha.6-dist/js/bootstrap.min.js' %}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.action-delete').click(function(e){
+                if (!confirm('Are you sure to delete this record?')) {
+                    e.preventDefault()
+                    return
+                } else {
+                }
+            })
+
+            $('.action-save').click(function(e){
+                if (!confirm('Kindly make sure to review entries. Continue saving?')) {
+                    e.preventDefault()
+                    return
+                } else {
+                }
+            })
+
+            $('.action-detail').click(function(e){
+                alias = $(this).data('action-alias')
+                if (!confirm('View ' + alias + '\s detail?')) {
+                    e.preventDefault()
+                    return
+                } else {
+                }
+            })
+        })
+    </script>
+    {% block script %}{% endblock script %}
+
 </body>
 </html>

@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4.0.0-alpha.6-dist/css/bootstrap.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome-4.7.0/css/font-awesome.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/paper.css' %}">
     <style type="text/css">
         .btn-page-top-bottom{
              position:fixed;
@@ -70,7 +71,7 @@
 
     <div class="container" id='id-top'>
 
-        <div class="content">
+        <div class="container-fluid content">
             {% block content %}
                 <p>Soon to rise...</p>
             {% endblock content %}
@@ -97,6 +98,15 @@
 
             $('.action-save').click(function(e){
                 if (!confirm('Kindly make sure to review entries. Continue saving?')) {
+                    e.preventDefault()
+                    return
+                } else {
+                }
+            })
+
+            $('.action-detail').click(function(e){
+                alias = $(this).data('action-alias')
+                if (!confirm('View ' + alias + '\s detail?')) {
                     e.preventDefault()
                     return
                 } else {
