@@ -1,0 +1,35 @@
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#id-button-add-row-compliance-bir').click(function() {
+            cloneMore('#id-table-compliance-bir tbody tr:last', 'bircompliance_set');
+        })
+
+        $('#id-button-add-row-client-practitioner').click(function() {
+            cloneMore('#id-table-client-practitioner tbody tr:last', 'clientpractitioner_set');
+        })
+
+        function cloneMore(selector, type) {
+            var newElement = $(selector).clone(true);
+            var total = $('#id_' + type + '-TOTAL_FORMS').val();
+            newElement.find(':input').each(function() {
+                var name = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+                var id = 'id_' + name;
+                $(this).attr({'name': name, 'id': id});
+                if ($(this).attr('type') == 'checkbox') {
+                } else {
+                    $(this).removeAttr('value')
+                    
+                }
+            });
+            newElement.find('label').each(function() {
+                var newFor = $(this).attr('for').replace('-' + (total-1) + '-', '-' + total + '-');
+                $(this).attr('for', newFor);
+            });
+            total++;
+            $('#id_' + type + '-TOTAL_FORMS').val(total);
+            $(selector).after(newElement);
+        }
+        
+    })
+</script>

@@ -4,6 +4,8 @@
 <html>
 <head>
     <title>{% block title %}{% endblock title %} | SantosCua</title>
+    <!-- <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"> -->
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -21,7 +23,7 @@
             color: black;
         }
         .color-white{
-            color: white;
+            color: #fff;
         }
         .color-black{
             color: #212121;
@@ -43,7 +45,7 @@
 </head>
 <body>
 
-    <nav class="navbar sticky-top navbar-toggleable-md navbar-inverse bg-inverse container-fluid">
+    <nav class="navbar sticky navbar-toggleable-md navbar-inverse bg-inverse container-fluid">
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -84,9 +86,9 @@
     </nav>
 
 
-    <div class="container" id='id-top'>
+    <div class="container-fluid " id='id-top'>
 
-        <div class="container-fluid content">
+        <div class="content">
             {% block content %}
                 <p>Soon to rise...</p>
             {% endblock content %}
@@ -129,6 +131,7 @@
             })
         })
     </script>
+    
     {% block script %}{% endblock script %}
 
 </body>

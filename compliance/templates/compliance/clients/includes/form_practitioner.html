@@ -1,0 +1,60 @@
+    <!-- formset practitioner -->
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <a data-toggle="collapse" href="#id-div-practitioner" >
+                <div class="panel-heading bg-inverse color-gray">
+                    <h4 class="panel-title">
+                        Practitioner
+                    </h4>
+                </div>
+                
+            </a>
+        <div id="id-div-practitioner" class="panel-collapse collapse">
+            <div class="panel-body">
+                <table class="table table-sm table-condensed table-bordered" id="id-table-client-practitioner">
+                    
+                    {{ formset_practitioner.management_form }}
+
+                    {% for form in formset_practitioner.forms %}
+                        {% if forloop.first %}
+                            <thead>
+                            <tr>
+                                {% for field in form.visible_fields %}
+                                    <th class="text-center">{{ field.label|capfirst }}</th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                        {% endif %}
+                        <tr class="{% cycle 'row1' 'row2' %} formset_row">
+                            {% for field in form.visible_fields %}
+                                <td>
+                                    {# Include the hidden fields in the form #}
+                                    {% if forloop.first %}
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                    {% endif %}
+                                    {{ field.errors.as_ul }}
+                                    {{ field }}
+                                    
+                                </td>
+                            {% endfor %}
+                        </tr>
+
+                        {% if forloop.last %}
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td colspan="2" class="text-right">
+                                        <button class="btn btn-default btn-block btn-sm" title="add row"  type="button" id="id-button-add-row-client-practitioner"><i class="fa fa-2x fa-user"></i></button>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        {% endif %}
+
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>

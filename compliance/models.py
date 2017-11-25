@@ -11,28 +11,44 @@ from django.utils import timezone
 
 
 class Client(models.Model):
-
-    line_of_business_choices = [
+    mbye_choices = [
+        (1, 'January'),
+        (2, 'February'),
+        (3, 'March'),
+        (4, 'April'),
+        (5, 'May'),
+        (6, 'June'),
+        (7, 'July'),
+        (8, 'August'),
+        (9, 'September'),
+        (10, 'October'),
+        (11, 'November'),
+        (12, 'December')
+    ]
+    
+    lob_choices = [
         (1, 'OTHER TELECOMMUNICATION'),
         (2, 'OTHER WHOLESALING'),
         (3, 'SALE OF AGGREGATES'),
         (4, 'OTHER RETAIL SALE IN SPECIALIZED STORES'),
     ]
 
-    engagement_series_num = models.IntegerField(null=True, blank=True, editable=False)
+    engagement_series_num = models.IntegerField(null=True, blank=True)
     contact = models.ForeignKey(Contact, verbose_name='client')
+    is_calendar_year = models.BooleanField(null=False, default=True)
+    month_business_year_end = models.IntegerField(null=False, blank=False, default=12, choices=mbye_choices)
     rdo = models.ForeignKey(Rdo)
     line_of_business = models.IntegerField(
         null=True,
         blank=True,
-        choices=line_of_business_choices
+        choices=lob_choices
     )
     date_start = models.DateField(
         default=timezone.now,
         null=False,
         blank=False,
     )
-    date_end = models.DateField(null=True, blank=True)
+    date_end = models.DateField(null=True, blank=False)
     is_active = models.BooleanField(null=False, default=False)
     is_deleted = models.BooleanField(default=False)
     practitioners = models.ManyToManyField(
@@ -50,7 +66,7 @@ class Client(models.Model):
         if (not _lob):
             return '-'
             
-        for k,v in self.line_of_business_choices:
+        for k,v in self.lob_choices:
             if (_lob == k):
                 return v
                 break
@@ -102,7 +118,9 @@ class ClientPractitioner(models.Model):
 
 
 class BirCompliance(models.Model):
-    """docstring for ClassName"""
+    """
+        Compliance clients' BIR compliance are recorded here.
+    """
     class Meta:
         verbose_name_plural = 'Compliance - BIR'
 

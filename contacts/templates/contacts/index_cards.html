@@ -35,6 +35,13 @@
      <!-- search box -->
      {% include 'includes/index_search.html' %}
 
+    <!-- if recordset is blank -->
+    {% if not contact_list  %}
+        <div class="container">
+            {% include 'includes/index_no_record.html' %}
+        </div>
+    {% endif %}
+
     {% if contact_list %}
         <!-- list -->
         <div class="container">
@@ -45,66 +52,88 @@
             <!-- contact cards -->
             <div class="row flex-spaces"> 
 
-            {% for contact in contact_list %}          
+            {% for contact in contact_list %}
+            {% with alias=contact.alias|upper %}          
               <div class="card" style="width: 20rem;">
 
-                <div class="card-header">
+                <div class="card-header"">
+                    <span class="badge default" popover="Click to toggle quick details of {{ contact.alias|upper }}"><a href="#id-contact-custom-{{ contact.id }}" data-toggle="collapse" data-target="#id-collapse-contact-{{ contact.id }}" style="color:#fff;text-decoration:none;">{{ alias }}</a></span>
+
                     {% if contact.is_client %}
-                        <span class="badge warning">Client</span>
+                        <span class="badge warning">
+                             <a href="/compliance/engagements?q={{ alias }}" target="_blank" style="color:white" popover="Click to view engagements with {{ alias }}">Client</a>
+                        </span>
                     {% endif %}
 
-                    {% if contact.is_employee %}
-                        <span class="badge secondary">Employee</span>
-                    {% endif %}
+                    {% with employee=contact.get_employee_id.id %}
+                        {% if employee %}
+                            <span class="badge secondary">
+                                <a href="{% url 'employees:detail' employee %}" target="_blank" style="color:white" popover="Click to view employment details of {{ alias }}">Employee</a>
+                            </span>
+                            
+                        {% endif %}
+                        
+                    {% endwith %}
 
                     {% if contact.vip_alias %}
                         <span class="badge danger">{{contact.vip_alias|upper}}</span>
                     {% endif %}
                 </div>
 
-                    <img class="text-center img-avatar" src="/media/{{contact.image }}" width="150px" height="
-    200px" alt="{{contact.alias}} image">
+                    <!-- if has uploaded image -->
+                    <span>
+                        <a href="{% url 'contacts:detail' contact.id %}"  title="view {{contact.alias}}" target="_blank" style="text-decoration: none;">
+                            {% if contact.image %}
+                                <img class="text-center img-avatar" src="/media/{{contact.image }}" width="150px" height="200px" alt="{{ alias }} image">
+                            {% endif %}
 
-                  <div class="card-body" >
-                    <h4 class="card-title">
-                        <a class="color-black" href="{% url 'contacts:detail' contact.id %}"  title="view {{contact.alias}}">
-                            {{contact|title}}
-                        </a>
-                    </h4>
-
-                    <h5 class="card-subtitle"><small>TIN: </small>{{contact.tax_num}}</h5>
-                    <p class=" card-text">Notice that the card width in this example have been set to 20rem, otherwise it will try to fill the current container/row where the card is.</p>
-                        
-                  </div>  <!-- card body -->
-
-                    <div class="card-footer">
-                        <form id='id-form-delete-{{forloop.counter}}' action="{% url 'contacts:destroy' contact.id %}" method="post">
-
-                            {% csrf_token %}
-                            <button form='id-form-delete-{{forloop.counter}}' class="action-delete btn btn-outline-danger" type="submit" title="delete">
-                                <i class="fa fa fa-trash-o" ></i>
-                            </button>
+                            <!-- if no uploaded image -->
+                            {% if not contact.image %}
+                                <img class="text-center img-avatar" src="/media/contacts/images/empty.png" width="150px" height="200px" alt="{{ alias }} image">
+                            {% endif %}
                             
-                        </form>
+                        </a>
+                        
+                    </span>
 
-                    </div>
+                  <div class="collapse" id="id-collapse-contact-{{ contact.id }}">
+                      <div class="card-body" >
+                        <h4 class="card-title">
+                            <a class="color-black" href="{% url 'contacts:detail' contact.id %}" target="_blank" title="view {{ alias }}" id="id-contact-custom-{{ contact.id }}">
+                                {{contact|title}}
+                            </a>
+                        </h4>
 
-                </div>              
+                        <h5 class="card-subtitle"><small>TIN: </small>{{contact.tax_num}}</h5>
+                        <p class=" card-text">Notice that the card width in this example have been set to 20rem, otherwise it will try to fill the current container/row where the card is.</p>
+                            
+                      </div>  <!-- card body -->
+
+                        <div class="card-footer">
+                            <form id='id-form-delete-{{forloop.counter}}' action="{% url 'contacts:destroy' contact.id %}" method="post">
+
+                                {% csrf_token %}
+                                <button form='id-form-delete-{{forloop.counter}}' class="action-delete btn btn-outline-danger" type="submit" title="delete">
+                                    <i class="fa fa fa-trash-o" ></i>
+                                </button>
+                                
+                            </form>
+
+                        </div>
+                  </div>
+
+                </div>
+                
+            {% endwith %} <!-- alias|upper --> 
             
             {% endfor %}
                 
-            </div>
-
+            </div>    
             <!-- pagination bottom -->
             {% include 'includes/index_pagination.html' with model_list=contact_list model_name='contacts'%}
 
         </div>
-    {% endif %}
-     
-    <!-- if recordset is blank -->
-    {% if not employee_list  %}
-        {% include 'includes/index_no_record.html' %}
-    {% endif %}
+    {% endif %}     
     
 {% endblock content %}
 {% block script %}

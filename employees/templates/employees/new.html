@@ -28,3 +28,17 @@
     </form>
     
 {% endblock content %}
+
+{% block script %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            // disable fields
+            $('#id_date_resigned').attr('disabled', true)
+            $('#id_is_deleted').attr('disabled', true)
+            
+            // set focus
+            $('#id_id_num').focus()
+        })
+    </script>
+{% endblock script %}

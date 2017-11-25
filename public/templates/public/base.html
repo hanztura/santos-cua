@@ -42,44 +42,44 @@
     {% block head %}{% endblock head %}
 </head>
 <body>
-    <nav class="navbar sticky-top navbar-toggleable-md navbar-inverse bg-inverse container-fluid">
+    <nav class="navbar sticky-top navbar-toggleable-md navbar-inverse bg-inverse">
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-    <div class="row col-12 align-bottom text-left">
-        <!-- brand -->
-          <div class="col-2">
-            <a class="navbar-brand text-warning" href="http://www.santos-cua.com" target="_blank">
-                SantosCuaAAC
-            </a>
-          </div>
-
-          <!-- links -->
-          <div class="col-10 collapse navbar-collapse" id="navbarSupportedContent">
-            <div class="col-6 navbar-nav">
-                <!-- home -->
-                <a class="nav-item nav-link text-info" href="{% url 'public:home' %}">
-                    <i class="fa fa-2x fa-home" title="Home"></i>
+        <div class="row col-12 align-bottom text-left">
+            <!-- brand -->
+              <div class="col-2 no-margin">
+                <a class="navbar-brand text-warning" href="http://www.santos-cua.com" target="_blank">
+                    SantosCuaAAC
                 </a>
+              </div>
 
-                  {% block nav %}
+              <!-- links -->
+              <div class="col-10 collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="col-6 navbar-nav">
+                    <!-- home -->
+                    <a class="nav-item nav-link text-info" href="{% url 'public:home' %}">
+                        <i class="fa fa-2x fa-home" title="Home"></i>
+                    </a>
 
-                  {% endblock nav %}            
-            </div>
-            <!-- nav description -->
-            <div class="col-6">
-                <span class="navbar-text">
-                  <small>
-                      <p><i>Constant Reinvention…Relentless Innovation…Endless Improvement…</i></p>
-                  </small>
-                </span>
+                      {% block nav %}
+
+                      {% endblock nav %}            
+                </div>
+                <!-- nav description -->
+                <div class="col-6">
+                    <span class="navbar-text">
+                      <small>
+                          <p><i>Constant Reinvention…Relentless Innovation…Endless Improvement…</i></p>
+                      </small>
+                    </span>
+                    
+                </div>
+              </div>
+
                 
-            </div>
-          </div>
-
-            
-    </div>
+        </div>
     </nav>
 
     <div class="container" id='id-top'>

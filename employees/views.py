@@ -70,7 +70,10 @@ def new(request, id=0):
     if request.method == "GET":
         if ((not id == 0) and (not id == None)):
             contact = Contact.objects.get(pk=id)
-            form = EmployeeForm(initial={'contact':  contact})
+            form = EmployeeForm(initial={
+                'contact':  contact,
+                'abbr': contact.alias[:3],
+            })
         else:
             form = EmployeeForm()
             
@@ -94,7 +97,10 @@ def create(request):
         fail = render(request, 'employees/new.html', context)
 
         if form.is_valid():
-            new_contact = form.save()
+            new_employee = form.save()
+            contact = Contact.objects.get(pk=new_employee.contact_id)
+            contact.is_employee = True
+            contact.save()
         else:
             return fail
 

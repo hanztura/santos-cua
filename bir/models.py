@@ -42,9 +42,43 @@ class BirForm(models.Model):
         ret = str(self.form_code)
         return ret
 
+    @property
+    def dead_period(self):
+        ret = self.deadline_period
+        # get string value
+        for choice in self.dpc_choices:
+            if choice[0] == ret:
+                ret = choice[1][0].upper()
+                break
+
+        return ret
+
+    @property
+    def dead_by_ref(self):
+        ret = self.deadline_cy_ref
+        # get string value
+        for choice in self.dcr_choices:
+            if choice[0] == ret:
+                ret = choice[1][0].upper()
+                break
+
+        return ret
+
+    @property
+    def dead_date_type(self):
+        ret = self.deadline_date_type
+        # get string value
+        for choice in self.ddt_choices:
+            if choice[0] == ret:
+                ret = choice[1][0].upper()
+                break
+
+        return ret
+
+
 class BirFormSchedule(models.Model):
     """docstring for ClassName"""
-    bir_form = models.ForeignKey(BirForm)
+    bir_form = models.ForeignKey(BirForm, related_name='schedules')
     index = models.IntegerField(null=False, blank=False)
     month = models.IntegerField(null=False, blank=False)
     day = models.IntegerField(null=False, blank=False)

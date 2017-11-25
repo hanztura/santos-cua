@@ -21,14 +21,42 @@
 
     <form enctype="multipart/form-data" action="{% url 'compliance:client_create' %}" method="post">
         {% csrf_token %}
+
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <a data-toggle="collapse" href="#id-div-model" aria-expanded="true">
+                    <div class="panel-heading bg-inverse color-gray">
+                        <h4 class="panel-title">
+                            Client Info
+                        </h4>
+                    </div>
+                    
+                </a>
+                <div id="id-div-model" aria-expanded="true" class="collapse show" >
+                    <div class="panel-body">
+                        <table class="table table-condensed table-bordered">
+                            <tbody>
+                                {{ form.as_table }}
+                            </tbody>
+                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
         
-        <table class="table table-condensed table-bordered">
-            <tbody>
-                {{ form.as_table }}
-            </tbody>
-            
-        </table>
+        <!-- formset practitioner -->
+        {% include './includes/form_practitioner.html' %}
+
+        <!-- formset bir -->
+        {% include './includes/form_bir_compliance.html' %}
+
         <input type="submit" value="Create">
     </form>
     
 {% endblock content %}
+
+{% block script %}
+    
+    {% include './includes/js/form.html' %}
+{% endblock script %}

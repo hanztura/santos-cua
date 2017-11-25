@@ -54,8 +54,17 @@
                     {% endif %}
                 </div>
 
-                    <img class="text-center img-avatar" src="/media/{{employee.contact.image }}" width="150px" height="200px" alt="{{employee.contact.alias}} image">
+                    <!-- if has uploaded image -->
+                    {% if employee.contact.image %}
+                        <img class="text-center img-avatar" src="/media/{{employee.contact.image }}" width="150px" height="200px" alt="{{employee.contact.alias}} image">
 
+                    {% endif %}
+
+                    <!-- if no uploaded image -->
+                    {% if not employee.contact.image %}
+                        <img class="text-center img-avatar" src="/media/contacts/images/empty.png" width="150px" height="200px" alt="{{contact.alias}} image">
+                    {% endif %}
+                    
                   <div class="card-body" >
                     <h4 class="card-title">
                         <a class="color-black action-detail" data-action-alias="{{ employee.abbr|upper }}" href="{% url 'employees:detail' employee.id %}"  title="view {{employee.abbr}}">

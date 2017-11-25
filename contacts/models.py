@@ -60,6 +60,14 @@ class Contact(models.Model):
 		full_name = (' '.join([full_name, middle_name + '.'])) if middle_name else full_name
 		return full_name
 
+	@property
+	def get_employee_id(self):
+		if self.employee_set:
+			ret = self.employee_set.first
+			return ret
+		else:
+			ret = None
+			return ret
 
 class Address(models.Model):
 	class Meta:

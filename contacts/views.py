@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.forms import model_to_dict
+from django.db.models import Q
 
 # pagination
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -16,9 +17,15 @@ def index(request):
 
     if not q:
         q = ''
-        contact_list = Contact.objects.filter(alias__contains=q).order_by('alias')
+        contact_list = Contact.objects.order_by('alias')
     else:
-        contact_list = Contact.objects.filter(alias__contains=q).order_by('alias')[:10]
+        _q = q.lower()
+        if _q == ':clients'or _q == ':c':
+            contact_list = Contact.objects.filter(is_client=True).order_by('alias')
+        elif _q == ':employee' or _q == ':e':
+            contact_list = Contact.objects.filter(is_employee=True).order_by('alias')        
+        else:
+            contact_list = Contact.objects.filter(Q(alias__contains=q) | Q(tax_num__contains=q)).order_by('alias')[:10]
 
     paginator = Paginator(contact_list, 10)
     
@@ -37,7 +44,7 @@ def index(request):
         'page': page,
         'q': q,
         'index_url': 'contacts:index',
-        'search_placeholder': 'type contact alias'
+        'search_placeholder': 'type contact alias/tin'
     }
 
     return render(request, 'contacts/index_cards.html', context)
@@ -84,15 +91,15 @@ def detail(request, contact_id):
 
 def new(request):
     form = ContactForm()
-    formset_phone = PhoneFormSet()
-    formset_address = AddressFormSet()
-    formset_email = EmailFormSet()
+    # formset_phone = PhoneFormSet()
+    # formset_address = AddressFormSet()
+    # formset_email = EmailFormSet()
         
     context = {
         'form' : form,
-        'formset_phone': formset_phone,
-        'formset_address': formset_address,
-        'formset_email': formset_email
+        # 'formset_phone': formset_phone,
+        # 'formset_address': formset_address,
+        # 'formset_email': formset_email
     }
 
     return render(request, 'contacts/new.html', context)
@@ -137,7 +144,7 @@ def create(request):
         # else:
         #     return fail
 
-        return HttpResponseRedirect(reverse('contacts:index'))
+        return HttpResponseRedirect(reverse('contacts:detail', kwargs={'contact_id':new_contact.id}))
 
 def update(request, contact_id):
     if request.method == 'POST':
@@ -186,8 +193,10 @@ def update(request, contact_id):
 def destroy(request, contact_id):
     if request.method == "POST":
         contact = Contact.objects.get(id=contact_id)
-        contact.is_deleted = True
+        # contact.is_deleted = True
 
-        contact.save()
+        # contact.save()
+
+        contact.delete()
         
     return HttpResponseRedirect(reverse('contacts:index'))

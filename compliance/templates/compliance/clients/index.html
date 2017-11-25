@@ -3,7 +3,6 @@
 {% block title %}Compliance Engagements{% endblock title %}
 
 {% block nav %}
-    {{ block.super }}
     <!-- compliance home -->
     {% include '../home.html' %}
 
@@ -37,10 +36,11 @@
      <!-- search box -->
      {% include 'includes/index_search.html' %}
 
+
+    {% if client_list %}
     <!-- pagination -->
     {% include 'includes/index_pagination.html' with model_list=client_list model_name="clients" %}
 
-    {% if client_list %}
         <!-- list -->
         <div class="container">
             <table class="table table-condensed table-bordered table-hover table-striped color-black">
@@ -148,16 +148,18 @@
                     
                 </tbody>
             </table>
+
+        <!-- pagination -->
+        {% include 'includes/index_pagination.html' with model_list=client_list model_name="clients" %}
+                    
         </div>
     {% endif %}
 
     <!-- if recordset is blank -->
-    {% if not employee_list  %}
+    {% if not client_list  %}
         {% include 'includes/index_no_record.html' %}
     {% endif %}
     
-    <!-- pagination -->
-    {% include 'includes/index_pagination.html' with model_list=client_list model_name="clients" %}
 {% endblock content %}
 
 {% block script %}
