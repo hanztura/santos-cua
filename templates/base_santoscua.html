@@ -14,10 +14,14 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome-4.7.0/css/font-awesome.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/paper.css' %}">
     <style type="text/css">
+        html, body {
+            height: 100%;
+        }
         .btn-page-top-bottom{
              position:fixed;
              bottom:0;
              right:0;
+             margin-bottom: 40px;
         }
         .color-black{
             color: black;
@@ -55,6 +59,9 @@
         .bg-grey{
             background-color: #424242;
         }
+        .cursor-pointer{
+            cursor: pointer;
+        }
     </style>
     {% block head %}{% endblock head %}
 </head>
@@ -75,7 +82,7 @@
 
               <!-- links -->
               <div class="col-10 collapse navbar-collapse" id="navbarSupportedContent">
-                <div class="col-6 navbar-nav">
+                <div class="col-8 navbar-nav">
                     <!-- home -->
                     <a class="nav-item nav-link text-white" href="{% url 'public:home' %}">
                         <i class="fa fa-2x fa-home" title="Home"></i>
@@ -83,17 +90,29 @@
 
                       {% block nav %}
 
-                      {% endblock nav %}            
+                      {% endblock nav %}  
                 </div>
-                <!-- nav description -->
-                <div class="col-6">
-                    <span class="navbar-text">
-                      <small>
-                          <p><i>Constant Reinvention…Relentless Innovation…Endless Improvement…</i></p>
-                      </small>
-                    </span>
-                    
-                </div>
+                <!-- nav login -->
+                {% if not user.is_authenticated %}
+                    <div class="col-4">
+
+                        <a class="nav-item nav-link text-white" href="{% url 'public:login' %}">
+                            <span><i class="fa fa-1x fa-user-circle" title="Log-in"></i>Log-in</span>
+                        </a>       
+                        
+                    </div>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <div class="col-4 text-sm">
+                        
+                        <form action="{% url 'public:logout' %}" method="post" class="form-inline">
+                            {% csrf_token %}
+                            <span><i class="fa fa-1x fa-user-circle" title="User"></i>Hi {{ user|upper }}!</span>
+                            <input type="submit" value="logout" class="btn btn-link cursor-pointer">
+                        </form>
+                    </div>
+                {% endif %}
               </div>
 
                 
@@ -101,7 +120,7 @@
     </nav>
 
 
-    <div class="container-fluid ">
+    <div class="wrapper container-fluid">
 
         <div class="content">
             {% block content %}
@@ -110,11 +129,21 @@
         </div>
 
         <div id="id-bottom"></div>
-        
-        <div class="btn-page-top-bottom">
-            <a href="#id-top"><i class="fa fa-arrow-up color-black"></i></a>
-            <a href="#id-bottom"><i class="fa fa-arrow-down color-black"></i></a>
+
+        <div class="copyright text-center text-white bg-red fixed-bottom p-0">
+            <div class="container-fluid">
+                <small>Copyright &copy; Santos-Cua AAC Firm Management 2017</small>
+                |
+                <small>part of FirmOne project by: <span class="badge default" title="Visit iamhanz now!"><a href="http://iamhanz.com" target="_blank" class="text-white">iamhanz.com</a></span></small>
+            </div>
         </div>
+
+        <div class="btn-page-top-bottom">
+            <a href="#id-top"><i class="fa fa-arrow-up bg-fade"></i></a>
+            <a href="#id-bottom"><i class="fa fa-arrow-down bg-fade"></i></a>
+        </div>
+
+
     </div>
 
     <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>

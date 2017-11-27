@@ -15,6 +15,9 @@ def index(request):
     q = request.GET.get('q')
     page = request.GET.get('page')
 
+    # check user auth
+    user = request.user
+
     if not q:
         q = ''
         contact_list = Contact.objects.order_by('alias')
@@ -44,7 +47,8 @@ def index(request):
         'page': page,
         'q': q,
         'index_url': 'contacts:index',
-        'search_placeholder': 'type contact alias/tin'
+        'search_placeholder': 'type contact alias/tin',
+        'user': user,
     }
 
     return render(request, 'contacts/index_cards.html', context)
