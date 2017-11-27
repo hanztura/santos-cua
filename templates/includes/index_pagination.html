@@ -19,7 +19,7 @@
                     <!-- if no page OR 1st page -->
                     {% if not page%}
                         {% if forloop.first%}
-                            <div class="xs-1 sm-1 md-1 col border border-primary bg-primary ">
+                            <div class="xs-1 sm-1 md-1 col border border-primary bg-red-light ">
                                 <a class="" href="?q={{ q }}&page={{ forloop.counter }}">{{ forloop.counter }}</a>
                             </div>
                         {% endif %}
@@ -32,7 +32,7 @@
 
                     {% if page %}
                         {% ifequal model_list.number forloop.counter%}
-                            <div class="xs-1 sm-1 md-1 col border border-primary bg-primary ">
+                            <div class="xs-1 sm-1 md-1 col border border-primary bg-red-light ">
                                 <a class="" href="?q={{ q }}&page={{ forloop.counter }}">{{ forloop.counter }}</a>
                             </div>
                         {% endifequal %}
@@ -59,6 +59,7 @@
             {% endifequal %}
     </div>
     <div class="col-3">
-        <small>Showing pages {{model_list.number}} of {{model_list.paginator.num_pages}}</small>
+        {% widthratio model_list.start_index 1 -1 as samp%}
+        <small>Showing {{ model_list.end_index|add:samp|add:1 }} of {{model_list.paginator.count}}</small>
     </div>
 </nav>

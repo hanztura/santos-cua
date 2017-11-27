@@ -1,12 +1,12 @@
 from django.db import models
 from django.utils import timezone
+import datetime
 
 from bir.models import Rdo, BirForm
 from contacts.models import Contact
 from employees.models import Employee
 
 
-from django.utils import timezone
 # Create your models here.
 
 
@@ -97,6 +97,16 @@ class Client(models.Model):
             ret = self.practitioners.first()
         return ret
 
+    @property
+    def has_ended(self):
+        date_end = self.date_end
+        if not date_end:
+            return False
+        if (self.date_end < datetime.date.today()):
+            return True
+        else:
+            return False
+
 
 class ClientPractitioner(models.Model):
     """docstring for ClientPractitioner"""
@@ -126,7 +136,7 @@ class BirCompliance(models.Model):
 
     client = models.ForeignKey(Client)
     bir_form = models.ForeignKey(BirForm)
-    is_active = models.BooleanField(null=False, default=False)
+    is_active = models.BooleanField(null=False, default=True)
 
     def __str__(self):
         ret = str(self.client.contact.alias) + ' | ' + str(self.bir_form.form_code)
@@ -142,6 +152,8 @@ class BirDeadline(models.Model):
     compliance = models.ForeignKey(BirCompliance)
     date_deadline = models.DateField(null=False, blank=False, default=timezone.now, verbose_name='deadline')
     date_notify_start = models.DateField(null=False, blank=False, verbose_name='notification starts on')
+    is_active = models.BooleanField(default=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         ret = ' | '.join([str(self.compliance), str(self.date_deadline)])

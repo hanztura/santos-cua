@@ -1,4 +1,4 @@
-{% extends "./base.html" %}
+{% extends "base_santoscua.html" %}
 
 {% load static %}
 
@@ -9,21 +9,16 @@
 
     <!-- list -->
     <a class="nav-item nav-link" href="{% url 'contacts:index' %}">
-        <i class="fa fa-2x fa-list-ul" title="Contacts"></i>
+        <i class="fa fa-2x fa-list-ul text-white" title="Contacts"></i>
     </a>
 
     <!-- delete -->
-    <form id='id-form-delete' action="{% url 'contacts:destroy' contact.id %}" method="post">
-
-        {% csrf_token %}
-        <button form='id-form-delete' class="action-delete btn btn-link" type="submit" title="delete">
-            <i class="fa fa-2x fa-trash text-danger" ></i>
-        </button>
-        
-    </form>
+    <a class="nav-item nav-link" href="{% url 'contacts:destroy' contact.id %}">
+        <i class="fa fa-2x fa-trash text-white" ></i>
+    </a>
 
     <!-- new contact -->
-    <a class="nav-item nav-link text-success" href="{% url 'contacts:new' %}">
+    <a class="nav-item nav-link text-white" href="{% url 'contacts:new' %}">
         <span title="New Contact">
             <i class="fa fa-1x fa-plus"></i>
             <i class="fa fa-2x fa-address-book-o"></i>
@@ -31,7 +26,7 @@
     </a>
 
     <!-- new employee -->
-    <a class="nav-item nav-link text-success" href="{% url 'employees:new' contact.id %}">
+    <a class="nav-item nav-link text-white" href="{% url 'employees:new' contact.id %}">
         <span title="New Employee">
             <i class="fa fa-1x fa-plus"></i>
             <i class="fa fa-2x fa-usd"></i>
@@ -39,7 +34,7 @@
     </a>
 
     <!-- new client -->
-    <a class="nav-item nav-link text-success" href="{% url 'compliance:client_new' contact.id %}">
+    <a class="nav-item nav-link text-white" href="{% url 'compliance:client_new' contact.id %}">
         <span title="New Client">
             <i class="fa fa-1x fa-plus"></i>
             <i class="fa fa-2x fa-briefcase"></i>

@@ -6,7 +6,7 @@
     {{ block.super }}
     <!-- new -->
     <a class="nav-item nav-link" href="{% url 'contacts:new' %}">
-        <i class="fa fa-2x fa-plus text-success" title="New"></i>
+        <i class="fa fa-2x fa-plus text-white" title="New"></i>
     </a>
 {% endblock nav %}
 
@@ -76,36 +76,37 @@
                     {% endwith %}
 
                     {% if contact.vip_alias %}
-                        <span class="badge danger">{{contact.vip_alias|upper}}</span>
+                        <span class="badge bg-medium-red">{{contact.vip_alias|upper}}</span>
                     {% endif %}
                 </div>
 
                     <!-- if has uploaded image -->
-                    <span>
+                    <div class="">
                         <a href="{% url 'contacts:detail' contact.id %}"  title="view {{contact.alias}}" target="_blank" style="text-decoration: none;">
                             {% if contact.image %}
-                                <img class="text-center img-avatar" src="/media/{{contact.image }}" width="150px" height="200px" alt="{{ alias }} image">
+                                <img class="text-center img-avatar mx-auto" src="/media/{{contact.image }}" width="150px" height="200px" alt="{{ alias }} image">
                             {% endif %}
 
                             <!-- if no uploaded image -->
                             {% if not contact.image %}
-                                <img class="text-center img-avatar" src="/media/contacts/images/empty.png" width="150px" height="200px" alt="{{ alias }} image">
+                                <img class="text-center img-avatar mx-auto" src="/media/contacts/images/empty.png" width="150px" height="200px" alt="{{ alias }} image">
                             {% endif %}
                             
                         </a>
                         
-                    </span>
+                    </div>
 
-                  <div class="collapse" id="id-collapse-contact-{{ contact.id }}">
                       <div class="card-body" >
-                        <h4 class="card-title">
+                        <h4 class="card-title text-center">
                             <a class="color-black" href="{% url 'contacts:detail' contact.id %}" target="_blank" title="view {{ alias }}" id="id-contact-custom-{{ contact.id }}">
                                 {{contact|title}}
                             </a>
                         </h4>
 
-                        <h5 class="card-subtitle"><small>TIN: </small>{{contact.tax_num}}</h5>
-                        <p class=" card-text">Notice that the card width in this example have been set to 20rem, otherwise it will try to fill the current container/row where the card is.</p>
+                      <div class="collapse" id="id-collapse-contact-{{ contact.id }}">
+                            <h5 class="card-subtitle"><small>TIN: </small>{{contact.tax_num}}</h5>
+                            <p class=" card-text">Notice that the card width in this example have been set to 20rem, otherwise it will try to fill the current container/row where the card is.</p>
+                      </div>
                             
                       </div>  <!-- card body -->
 
@@ -120,7 +121,6 @@
                             </form>
 
                         </div>
-                  </div>
 
                 </div>
                 

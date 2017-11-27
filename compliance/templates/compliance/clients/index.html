@@ -38,8 +38,8 @@
 
 
     {% if client_list %}
-    <!-- pagination -->
-    {% include 'includes/index_pagination.html' with model_list=client_list model_name="clients" %}
+        <!-- pagination -->
+        {% include 'includes/index_pagination.html' with model_list=client_list model_name="clients" %}
 
         <!-- list -->
         <div class="container">
@@ -84,19 +84,19 @@
                                 </a>
                                 <!-- badge here -->
                                 {% if client.rdo %}
-                                    <span class="badge badge-pill badge-default" title="RDO">{{client.rdo}}</span>
+                                    <span class="badge default" title="RDO">{{client.rdo}}</span>
                                 {% endif %}
 
                                 {% if client.is_active %}
-                                    <span class="badge badge-pill badge-success">Active</span>
+                                    <span class="badge success">Active</span>
                                 {% endif %}
 
                                 {% if not client.is_active %}
-                                    <span class="badge badge-pill badge-warning">Inactive</span>
+                                    <span class="badge warning">Inactive</span>
                                 {% endif %}
 
-                                {% if client.date_end %}
-                                    <span class="badge badge-pill badge-danger" title="engagement status">Ended</span>
+                                {% if client.has_ended %}
+                                    <span class="badge danger" title="engagement status">Ended</span>
                                 {% endif %}
                             </td>
 
@@ -157,7 +157,10 @@
 
     <!-- if recordset is blank -->
     {% if not client_list  %}
-        {% include 'includes/index_no_record.html' %}
+        <div class="container">
+            {% include 'includes/index_no_record.html' %}
+            
+        </div>
     {% endif %}
     
 {% endblock content %}

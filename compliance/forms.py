@@ -31,4 +31,5 @@ BIRComplianceFormSet = forms.inlineformset_factory(
         'bir_form', 'is_active',
     ],
     extra=1,
+    can_delete=False,
 )

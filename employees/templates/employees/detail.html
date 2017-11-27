@@ -1,4 +1,4 @@
-{% extends "./base.html" %}
+{% extends "base_santoscua.html" %}
 
 {% load static %}
 
@@ -8,22 +8,17 @@
     {{ block.super }}
 
     <!-- list -->
-    <a class="nav-item nav-link text-default" href="{% url 'employees:index' %}">
+    <a class="nav-item nav-link text-white" href="{% url 'employees:index' %}">
         <i class="fa fa-2x fa-list-ul" title="Employees"></i>
     </a>
 
     <!-- delete -->
-        <form id='id-form-delete' action="{% url 'employees:destroy' employee.id %}" method="post">
-
-            {% csrf_token %}
-            <button form='id-form-delete' class="action-delete btn btn-link" type="submit" title="delete">
-                <i class="fa fa-2x fa-trash text-danger" ></i>
-            </button>
-            
-        </form>
+    <a class="nav-item nav-link text-white" href="{% url 'employees:index' %}">
+        <i class="fa fa-2x fa-trash " title="Delete {{ employee.abbr }}"></i>
+    </a>
 
     <!-- new -->
-    <a class="nav-item nav-link text-success" href="{% url 'employees:new' %}">
+    <a class="nav-item nav-link text-white" href="{% url 'employees:new' %}">
         <i class="fa fa-2x fa-plus" title="New"></i>
     </a>
 {% endblock nav %}
@@ -81,7 +76,7 @@
 {% block script %}
     <script type="text/javascript">
         $(document).ready(function(){
-            alert('Welcome to {{employee.abbr|upper}}\'s employee profile.')
+            
         })
     </script>
 {% endblock script %}

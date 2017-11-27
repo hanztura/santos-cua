@@ -27,7 +27,7 @@
                         {% endif %}
                         <tr class="{% cycle 'row1' 'row2' %} formset_row">
                             {% for field in form.visible_fields %}
-                                <td>
+                                <td class="">
                                     {# Include the hidden fields in the form #}
                                     {% if forloop.first %}
                                         {% for hidden in form.hidden_fields %}
@@ -40,16 +40,27 @@
                                 </td>
                             {% endfor %}
                         </tr>
-
                         {% if forloop.last %}
-                            <tfoot>
-                                <tr>
-                                    <td colspan="3"></td>
-                                    <td colspan="2" class="text-right">
-                                        <button class="btn btn-default btn-block btn-sm" title="add row"  type="button" id="id-button-add-row-compliance-bir"><i class="fa fa-2x fa-plus"></i></button>
-                                    </td>
-                                </tr>
-                            </tfoot>
+                            {% comment "old add button" %}
+
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3"></td>
+                                        <td colspan="2" class="text-right">
+                                            <button class="btn btn-default btn-block btn-sm" title="add compliance"  type="button" id="id-button-add-compliance-bir" onclick='alert("coming soon")'><i class="fa fa-2x fa-plus"></i></button>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                                
+                            {% endcomment %}
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3"></td>
+                                        <td colspan="2" class="text-right">
+                                            <button class="btn btn-default btn-block btn-sm" title="add row"  type="button" id="id-button-add-row-compliance-bir"><i class="fa fa-2x fa-plus"></i></button>
+                                        </td>
+                                    </tr>
+                                </tfoot>
                         {% endif %}
 
                     {% endfor %}

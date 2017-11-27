@@ -199,4 +199,4 @@ def destroy(request, contact_id):
 
         contact.delete()
         
-    return HttpResponseRedirect(reverse('contacts:index'))
+    return render(request, 'alerts/deleted.html')

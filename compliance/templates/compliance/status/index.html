@@ -28,7 +28,18 @@
 {% block content %}
      <h1 class="">Status - List</h1>
 
-    {% if status_list %}
+    <!-- if recordset is blank -->
+    {% if not status_list  %}
+        <div class="container">
+            {% include 'includes/index_no_record.html' %}
+            
+        </div>
+    {% endif %}
+    
+    {% if status_list %}    
+        <!-- pagination top -->
+        {% include 'includes/index_pagination.html' with model_list=status_list model_name="status" %}
+
         <!-- list -->
         <div class="container">
             <table class="table table-condensed table-bordered table-hover table-striped color-black">
@@ -144,50 +155,12 @@
                     
                 </tbody>
             </table>
+
+            <!-- pagination top -->
+            {% include 'includes/index_pagination.html' with model_list=status_list model_name="status" %}
         </div>
     {% endif %}
-    
-    <!-- pagination -->
-    <nav aria-label="Client index navigation">
-        <ul class="pagination pagination-lg justify-content-center">
-            {% if status_list.has_previous %}
-                <li class="previous  page-item ">
-                    <a class="page-link" href="?page={{ status_list.previous_page_number }}"><i class="fa fa-angle-left icon-label" title="previous"></i></a>
-                </li>
-            {% endif %}
-            {% ifequal status_list.has_previous False %}
-                <li class='disabled previous page-item '>
-                    <span class="page-link"><i class="fa fa-angle-left icon-label" title="previous"></i></span>
-                </li>
-            {% endifequal %}
 
-            {% with ''|center:status_list.paginator.num_pages as range %}
-                {% for _ in range %}
-                    {% ifequal status_list.number forloop.counter%}
-                        <li class="active page-item">
-                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
-                        </li>
-                    {% endifequal %}
-                    {% ifnotequal status_list.number forloop.counter%}
-                        <li class=" page-item">
-                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
-                        </li>
-                    {% endifnotequal %}
-                {% endfor %}
-            {% endwith %}
-
-            {% if status_list.has_next %}
-                <li class="next page-item">
-                    <a class="page-link" href="?page={{ status_list.next_page_number }}"><i class="fa fa-angle-right icon-label" title="next"></i></a>
-                </li>
-            {% endif %}
-            {% ifequal status_list.has_next False %}
-                <li class='page-item disabled'>
-                    <span class="page-link"><i class="fa fa-angle-right icon-label" title="next"></i></span>
-                </li>
-            {% endifequal %}
-        </ul>
-    </nav>  
 {% endblock content %}
 
 {% block script %}

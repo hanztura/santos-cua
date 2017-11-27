@@ -55,19 +55,25 @@
                 </div>
 
                     <!-- if has uploaded image -->
-                    {% if employee.contact.image %}
-                        <img class="text-center img-avatar" src="/media/{{employee.contact.image }}" width="150px" height="200px" alt="{{employee.contact.alias}} image">
+                    <div>
+                        <a href="{% url 'employees:detail' employee.id %}" target="_blank" class="action-detail" data-action-alias="{{ employee.abbr|upper }}"  title="view {{employee.abbr}}">
 
-                    {% endif %}
+                            {% if employee.contact.image %}
+                                <img class="text-center img-avatar mx-auto" src="/media/{{employee.contact.image }}" width="150px" height="200px" alt="{{employee.contact.alias}} image">
 
-                    <!-- if no uploaded image -->
-                    {% if not employee.contact.image %}
-                        <img class="text-center img-avatar" src="/media/contacts/images/empty.png" width="150px" height="200px" alt="{{contact.alias}} image">
-                    {% endif %}
+                            {% endif %}
+
+                            <!-- if no uploaded image -->
+                            {% if not employee.contact.image %}
+                                <img class="text-center img-avatar mx-auto" src="/media/contacts/images/empty.png" width="150px" height="200px" alt="{{contact.alias}} image">
+                            {% endif %}
+                        </a>
+                        
+                    </div>
                     
                   <div class="card-body" >
-                    <h4 class="card-title">
-                        <a class="color-black action-detail" data-action-alias="{{ employee.abbr|upper }}" href="{% url 'employees:detail' employee.id %}"  title="view {{employee.abbr}}">
+                    <h4 class="card-title text-center">
+                        <a href="{% url 'employees:detail' employee.id %}" target="_blank" class="color-black action-detail " data-action-alias="{{ employee.abbr|upper }}"  title="view {{employee.abbr}}">
                             {{employee.contact|title}}
                         </a>
                     </h4>
@@ -76,7 +82,7 @@
                     <!-- <p class="card-text"><span class="badge default">ID</span>{{employee.id_num}}</p> -->
                     <p class=" card-text">
                         <span class="badge default">ID</span><span>{{employee.id_num}}</span><br>
-                        <span class="badge default">Hired</span><span>{{ employee.date_hired }}</span><br>
+                        <span class="badge default">Hired on</span><span>{{ employee.date_hired }}</span><br>
                     </p>
                         
                   </div>  <!-- card body -->
