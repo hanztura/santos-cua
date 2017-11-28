@@ -20,6 +20,8 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 
+from public.views import home
+
 urlpatterns = [
     url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')), # admin docs
@@ -32,5 +34,6 @@ urlpatterns = [
     url(r'^compliance/', include('compliance.urls')),
 
     
+    url(r'^home/', home),
     url(r'^', include('public.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

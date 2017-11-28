@@ -5,11 +5,34 @@
 {% block content %}
     <h1>Home</h1>
 
-    <ul>
-        <li><a href="{% url 'contacts:index' %}">Contacts</a></li>
-        <li><a href="{% url 'employees:index' %}">Employees</a></li>
-        <li><a href="{% url 'compliance:index' %}">Compliance</a></li>
-        <li><a href="/admin">Admin</a></li>
-    </ul>
+   	{% if user.is_authenticated %}
+	    <ul>
+	        <li><a href="{% url 'contacts:index' %}">Contacts</a></li>
+	        <li><a href="{% url 'employees:index' %}">Employees</a></li>
+	        <li><a href="{% url 'compliance:index' %}">Compliance</a></li>
+	        <li><a href="/admin">Admin</a></li>
+	    </ul>   	    
+   	{% endif %}
+
+   	{% if not user.is_authenticated %}
+   		{% if not logout %}
+		    <h3>Hi! Welcome to SantosCua Firm Management</h3>
+		    <p>Kindly <span class="badge secondary" popover="Click log-in link on the top right of your screen.">log-in</span> so that we will know how to serve you.</p>
+		    <p>Thank you.</p>
+   		{% endif %}
+
+   		{% if logout %}
+
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	    <span aria-hidden="true">&times;</span>
+	  </button>
+	    <h3>You have <span class="text-success">successfully</span> logged-out from SantosCua Firm Management</h3>
+	</div>
+	
+	    <p>You may <span class="badge secondary" popover="Click log-in link on the top right of your screen.">log-in</span> again, so that we can continue doing awesome things.</p>
+	    <p>Thank you.</p>
+   		{% endif %}
+   	{% endif %}
     
 {% endblock content %}
