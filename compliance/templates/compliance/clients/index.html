@@ -83,9 +83,6 @@
                                     <u>{{client.contact|title}}</u>
                                 </a>
                                 <!-- badge here -->
-                                {% if client.rdo %}
-                                    <span class="badge default" title="RDO">{{client.rdo}}</span>
-                                {% endif %}
 
                                 {% if client.is_active %}
                                     <span class="badge success">Active</span>
@@ -97,6 +94,13 @@
 
                                 {% if client.has_ended %}
                                     <span class="badge danger" title="engagement status">Ended</span>
+                                {% endif %}
+
+                                <!-- attachments badge -->
+                                {% if client.attachments.count %}
+                                    <span class="badge info" title="attachments">
+                                        <a href="{% url 'compliance:attachment_index' client.id %}">{{ client.attachments.count }} <i class="fa fa-files-o"></i></a>
+                                    </span>
                                 {% endif %}
                             </td>
 

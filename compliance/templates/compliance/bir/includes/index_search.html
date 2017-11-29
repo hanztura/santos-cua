@@ -1,0 +1,33 @@
+
+     <div class="container paper p-0">
+             <form class="" method="get" action="{% url index_url %}">
+                <div class="row m-0  border-dotted">
+                    <div class="col sm-12 md-9 m-0">
+                        <div class="row">
+                            <div class="form-group col-11 m-0">
+                             {% if q %}
+                                <input class="input-block" type="text" name="q" placeholder="Top results for: '{{ q }}'">
+                             {% endif %}
+                             {% if not q %}
+                                <input class="input-block" type="text" name="q" placeholder="{{ search_placeholder|title }}">
+                             {% endif %}
+                                
+                            </div>
+                            <div class="col-1">
+                                <span class="badge warning" title="advanced search => Months ':jan' to ':dec' OR Practitioner '::employee_abbr'"><i class="fa fa-bolt"></i></span>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+
+                    <div class="col sm-12 md-3 m-0">
+                        <div class="form-group m-0">
+                            <input class="input-block background-primary cursor-pointer border border-5" type="submit" value="Search">
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+             </form>
+     </div>

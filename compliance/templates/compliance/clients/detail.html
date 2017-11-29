@@ -29,6 +29,11 @@
     <a class="nav-item nav-link" href="{% url 'compliance:client_new' %}">
         <i class="fa fa-2x fa-plus text-success" title="New"></i>
     </a>
+    
+    <!-- new attachment-->
+    <a class="nav-item nav-link" href="{% url 'compliance:attachment_new' model.id %}">
+        <i class="fa fa-2x fa-files-o text-success" title="New Attachment"></i>
+    </a>
 {% endblock nav %}
 
 

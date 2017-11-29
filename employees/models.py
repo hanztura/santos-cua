@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 from contacts.models import Contact
 
@@ -14,6 +15,10 @@ class Employee(models.Model):
     date_hired = models.DateField(default=timezone.now)
     date_resigned = models.DateField(null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
+
+    # 2017-11-29
+    user = models.OneToOneField(User, null=True, related_name='user')
+    supervisors = models.ForeignKey('self', null=True, related_name='sups')
 
     def __str__(self):
         # employees full name

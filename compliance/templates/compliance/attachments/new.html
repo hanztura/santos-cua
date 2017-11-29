@@ -1,0 +1,56 @@
+{% extends "base_santoscua.html" %}
+
+{% load static %}
+
+{% block title %}Compliance Client Atachments{% endblock title %}
+
+{% block nav %}
+    {{ block.super }}
+    <!-- compliance home -->
+    {% include '../home.html' %}
+    
+    <!-- list -->
+    <a class="nav-item nav-link" href="{% url 'compliance:client_index' %}">
+        <i class="fa fa-2x fa-list-ul text-default" title="Clients"></i>
+    </a>
+
+{% endblock nav %}
+
+{% block content %}
+    <h1>Upload new Client Attachments</h1>
+
+    <form enctype="multipart/form-data" action="{% url 'compliance:attachment_create' %}" method="post">
+        {% csrf_token %}
+
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <a data-toggle="collapse" href="#id-div-model" aria-expanded="true">
+                    <div class="panel-heading bg-inverse color-gray">
+                        <h4 class="panel-title">
+                            Attachment
+                        </h4>
+                    </div>
+                    
+                </a>
+                <div id="id-div-model" aria-expanded="true" class="collapse show" >
+                    <div class="panel-body">
+                        <table class="table table-condensed table-bordered">
+                            <tbody>
+                                {{ form.as_table }}
+                            </tbody>
+                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <input type="submit" value="Create">
+    </form>
+    
+{% endblock content %}
+
+{% block script %}
+    
+    {% include '../clients/includes/js/form.html' %}
+{% endblock script %}

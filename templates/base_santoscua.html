@@ -21,7 +21,7 @@
              position:fixed;
              bottom:0;
              right:0;
-             margin-bottom: 40px;
+             margin-bottom: 60px;
         }
         .color-black{
             color: black;
@@ -68,21 +68,17 @@
 <body>
 
     <nav class="navbar sticky navbar-toggleable-md navbar-inverse bg-red container-fluid"  id='id-top'>
-      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
         <div class="row col-12 align-bottom text-left">
             <!-- brand -->
-              <div class="col-2">
-                <a class="navbar-brand text-warning" href="http://www.santos-cua.com" target="_blank">
+              <div class="col-xs-12 col-md-2">
+                <a class="navbar-brand text-warning" href="{% url 'public:home' %}" target="">
                     SantosCuaAAC
                 </a>
               </div>
 
               <!-- links -->
-              <div class="col-10 collapse navbar-collapse" id="navbarSupportedContent">
-                <div class="col-8 navbar-nav">
+              <div class="col-xs-12 col-md-10 collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="col-xs-12 col-md-8 navbar-nav">
                     <!-- home -->
                     <a class="nav-item nav-link text-white" href="{% url 'public:home' %}">
                         <i class="fa fa-2x fa-home" title="Home"></i>
@@ -92,37 +88,44 @@
 
                       {% endblock nav %}  
                 </div>
-                <!-- nav login -->
-                {% if not user.is_authenticated %}
-                    <div class="col-4">
 
-                        <a class="nav-item nav-link text-white" href="{% url 'public:login' %}">
-                            <span><i class="fa fa-1x fa-user-circle" title="Log-in"></i>Log-in</span>
-                        </a>       
-                        
-                    </div>
+                <!-- nav login -->
+
+                {% if not user.is_authenticated %}
+                <div class="col-xs-12 col-md-4">
+
+                    <a class="nav-item nav-link text-white" href="{% url 'public:login' %}">
+                        <span><i class="fa fa-1x fa-user-circle" title="Log-in"></i>Log-in</span>
+                    </a>       
+                    
+                </div>
                 {% endif %}
 
                 {% if user.is_authenticated %}
-                    <div class="col-4 text-sm">
+                <div class="col-xs-12 col-md-4 text-sm">
+                    
+                    <form action="{% url 'public:logout' %}" method="post" class="form-inline">
+                        {% csrf_token %}
                         
-                        <form action="{% url 'public:logout' %}" method="post" class="form-inline">
-                            {% csrf_token %}
-                            <span><i class="fa fa-1x fa-user-circle" title="User"></i>Hi {{ user|upper }}!</span>
-                            <input type="submit" value="logout" class="btn btn-link cursor-pointer">
-                        </form>
-                    </div>
+                        <span class="text-white"><i class="fa fa-1x fa-user-circle" title="User"></i>Hi {{ user|upper }}!</span>
+                        <input type="submit" value="logout" class="btn btn-link cursor-pointer  text-info">
+                    </form>
+                </div>
                 {% endif %}
               </div>
 
                 
         </div>
+
+      <button class="navbar-toggler navbar-toggler-right btn-link" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
     </nav>
 
 
     <div class="wrapper container-fluid">
 
-        <div class="content">
+        <div class="content my-4">
             {% block content %}
                 <p>Soon to rise...</p>
             {% endblock content %}
@@ -156,6 +159,12 @@
                     e.preventDefault()
                     return
                 } else {
+                }
+            })
+            $('.action-download').click(function(e){
+                if (!confirm('Continue download?')) {
+                    e.preventDefault()
+                    return
                 }
             })
 

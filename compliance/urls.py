@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .views import ClientViews, BirViews, StatusViews, ComplianceViews
+from .views import ClientViews, BirViews, StatusViews, ComplianceViews, AttachmentViews
 
 app_name = 'compliance'
 urlpatterns = [
@@ -28,5 +28,11 @@ urlpatterns = [
     url(r'^status/new$', StatusViews.new, name='status_new'),
     url(r'^status/create/', StatusViews.create, name='status_create'),
     url(r'^status/(?P<id>[0-9]+)/delete/$', StatusViews.destroy, name='status_destroy'),
+    
+    #  attachments
+    url(r'^attachments/(?P<client_id>[0-9]+)/$', AttachmentViews.index, name='attachment_index'),
+    url(r'^attachments/new/(?P<client_id>[0-9]+)*$', AttachmentViews.new, name='attachment_new'),
+    url(r'^attachments/create/', AttachmentViews.create, name='attachment_create'),
+    url(r'^attachments/(?P<id>[0-9]+)/delete/$', AttachmentViews.destroy, name='attachment_destroy'),
     
 ]

@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Client, ClientPractitioner, BirCompliance
+from .models import Client, ClientPractitioner, BirCompliance, ClientAttachment
 
 
 class ClientForm(forms.ModelForm):
@@ -33,3 +33,11 @@ BIRComplianceFormSet = forms.inlineformset_factory(
     extra=1,
     can_delete=False,
 )
+
+class ClientAttachmentForm(forms.ModelForm):
+    """docstring for ContactForm"""
+    class Meta:
+        
+        model = ClientAttachment
+        fields = '__all__'
+

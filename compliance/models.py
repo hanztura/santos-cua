@@ -7,9 +7,16 @@ from contacts.models import Contact
 from employees.models import Employee
 
 
+def client_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    date = datetime.datetime.now()
+    yr = date.year
+    mo = date.month
+    dy = date.day
+    return 'compliance/attachments/client_{0}/{2}/{3}/{4}/{1}'.format(instance.client.id, filename, yr, mo, dy)
+
+
 # Create your models here.
-
-
 class Client(models.Model):
     mbye_choices = [
         (1, 'January'),
@@ -159,6 +166,11 @@ class BirDeadline(models.Model):
         ret = ' | '.join([str(self.compliance), str(self.date_deadline)])
         return ret
 
+    @property
+    def practitioner(self):
+        ret = self.compliance.client.assigned
+        return ret
+
 
 class DeadlineStatus(models.Model):
     """docstring for ClassName"""
@@ -170,11 +182,12 @@ class DeadlineStatus(models.Model):
 
     status_choices = [
         (1, 'Working'),
-        (2, 'Drafted'),
+        (2, 'Draft'),
         (3, 'Filing'),
         (4, 'Verification'),
-        (5, 'Paid'),
+        (5, 'Payment'),
         (6, 'Done'),
+        (7, 'Archive'),
     ]
 
     bir_deadline = models.ForeignKey(BirDeadline)
@@ -206,4 +219,14 @@ class DeadlineStatus(models.Model):
             continue
 
         return '-'
+
+
+class ClientAttachment(models.Model):
+    """docstring for ClassName"""
+
+    client = models.ForeignKey(Client, related_name="attachments")
+    code = models.CharField(max_length=30, null=True, blank=True)
+    attachment = models.FileField(upload_to=client_directory_path)
+    remarks = models.CharField(max_length=100, null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
 

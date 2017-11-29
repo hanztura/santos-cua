@@ -1,12 +1,27 @@
 
-     <div class="container paper">
-         <form class="form-inline" method="get" action="{% url index_url %}">
-                 {% if q %}
-                    <input type="text" name="q" placeholder="Top results for: '{{ q }}'">
-                 {% endif %}
-                 {% if not q %}
-                    <input type="text" name="q" placeholder="{{ search_placeholder|title }}">
-                 {% endif %}
-                 <input type="submit" value="Search">
-         </form>
+     <div class="container paper p-0">
+             <form class="" method="get" action="{% url index_url %}">
+                <div class="row m-0  border-dotted">
+                    <div class="col sm-12 md-9 m-0">
+                        <div class="form-group m-0">
+                         {% if q %}
+                            <input class="input-block" type="text" name="q" placeholder="Top results for: '{{ q }}'">
+                         {% endif %}
+                         {% if not q %}
+                            <input class="input-block" type="text" name="q" placeholder="{{ search_placeholder|title }}">
+                         {% endif %}
+                            
+                        </div>
+                        
+                    </div>
+
+                    <div class="col sm-12 md-3 m-0">
+                        <div class="form-group m-0">
+                            <input class="input-block background-primary cursor-pointer border border-5" type="submit" value="Search">
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+             </form>
      </div>
