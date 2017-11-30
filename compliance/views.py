@@ -10,6 +10,9 @@ import calendar
 # pagination
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+# notifications
+from notifications.signals import notify
+
 from .models import Client, ClientPractitioner, BirCompliance, BirDeadline, DeadlineStatus, ClientAttachment
 from employees.models import Employee
 from contacts.models import Contact
@@ -234,6 +237,7 @@ class ClientViews():
                 'formset_bir': formset_bir,
             }
 
+            notify.send(request.user, recipient=request.user, verb="created an engagement", level='success')
             return render(request, 'compliance/clients/new.html', context)
         else:
             return HttpResponseRedirect(reverse('compliance:client_index'))
@@ -332,6 +336,9 @@ class ClientViews():
 
             # client.save()
             client.delete()
+
+            # notify
+            notify.send(request.user, recipient=request.user, verb="deleted an engagement", level='danger')
 
         return HttpResponseRedirect(reverse('compliance:client_index'))
 

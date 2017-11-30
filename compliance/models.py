@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 import datetime
 
+
 from bir.models import Rdo, BirForm
 from contacts.models import Contact
 from employees.models import Employee

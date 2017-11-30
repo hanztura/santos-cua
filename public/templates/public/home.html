@@ -1,9 +1,13 @@
-{% extends "base_santoscua.html" %}
+{% extends "base_santoscua_home.html" %}
+
+{% load static %}
 
 {% block title %}Home{% endblock title %}
 
 {% block content %}
     <h1>Home</h1>
+
+
 
    	{% if user.is_authenticated %}
 	    <ul>
@@ -22,17 +26,31 @@
    		{% endif %}
 
    		{% if logout %}
-
-	<div class="alert alert-success alert-dismissible fade show" role="alert">
-	  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-	    <span aria-hidden="true">&times;</span>
-	  </button>
-	    <h3>You have <span class="text-success">successfully</span> logged-out from SantosCua Firm Management</h3>
-	</div>
+		<div class="alert alert-success alert-dismissible fade show" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		  </button>
+		    <h3 class="alert-heading">You have <span class="text-success">successfully</span> logged-out from SantosCua Firm Management</h3>
+		</div>
 	
-	    <p>You may <span class="badge secondary" popover="Click log-in link on the top right of your screen."><a href="{% url 'public:login' %}">log-in</a></span> again, so that we can continue doing awesome things.</p>
+	    <p class="mb-0">You may <span class="badge secondary" popover="Click log-in link on the top right of your screen."><a href="{% url 'public:login' %}">log-in</a></span> again, so that we can continue doing awesome things.</p>
 	    <p>Thank you.</p>
    		{% endif %}
    	{% endif %}
     
 {% endblock content %}
+
+{% block notifications %}
+
+	{% if user.notifications.unread %}
+	<nav class="nav flex-column">
+        {% for notif in user.notifications.unread %}
+  		<a class="nav-link text-{{ notif.level }}" href="#">{{ notif }}</a>
+        {% endfor %}
+	</nav>
+	{% endif %}
+
+	{% if not user.notifications.unread %}
+	{{ block.super }}
+	{% endif %}
+{% endblock notifications %}

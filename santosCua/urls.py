@@ -20,6 +20,10 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 
+# django-notifications
+# https://github.com/django-notifications/django-notifications
+import notifications.urls
+
 from public.views import home
 
 urlpatterns = [
@@ -33,6 +37,8 @@ urlpatterns = [
 
     url(r'^compliance/', include('compliance.urls')),
 
+
+    url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
     
     url(r'^home/', home),
     url(r'^', include('public.urls')),

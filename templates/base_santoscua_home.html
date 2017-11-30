@@ -7,12 +7,12 @@
     <!-- <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"> -->
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
-    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4.0.0-alpha.6-dist/css/bootstrap.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome-4.7.0/css/font-awesome.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/paper.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4.0.0-alpha.6-dist/css/bootstrap.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome-4.7.0/css/font-awesome.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/paper.css' %}"/>
     <style type="text/css">
         html, body {
             height: 100%;
@@ -127,13 +127,27 @@
       </button>
     </nav>
 
-
     <div class="wrapper container-fluid">
+        <div class="row">
+            {# content #}
+            <div class="content col xs-12 md-8 my-4">
+                {% block content %}
+                    <p>Soon to rise...</p>
+                {% endblock content %}
+            </div>
 
-        <div class="content my-4">
-            {% block content %}
-                <p>Soon to rise...</p>
-            {% endblock content %}
+            {# notifications aside #}
+            {% if user.is_authenticated %}
+                <aside class="col xs-0 md-4 notifications">
+                <h4>Notifications</h4>
+
+                {% block notifications %}
+                    <p>Notifications are yet to come <span class="text-info">{{ user|upper }}</span> ...</p>    
+                {% endblock notifications %}
+                    
+                </aside>
+            {% endif %}
+            
         </div>
 
         <div id="id-bottom"></div>

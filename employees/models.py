@@ -28,3 +28,24 @@ class Employee(models.Model):
     def is_resigned(self, verbose_name='resigned'):
         ret = False
         return ret
+
+
+class Salary(models.Model):
+
+    payroll_type_choices = [
+        (1, 'Daily'),
+        (2, 'Periodic'),
+    ]
+
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name='Name')
+    date_start = models.DateField(default=timezone.now)
+    date_end = models.DateField(null=True, blank=True)
+    payroll_type = models.IntegerField(
+        max_length = 2,
+        default = 2,
+        choices=payroll_type_choices,
+    )
+    # monthly_work_days_ave = models.IntegerField(default=26)
+    monthly_rate = models.DecimalField(max_digits=8, decimal_places=2)
+    daily_rate = models.DecimalField(max_digits=8, decimal_places=2)
+    hourly_rate = models.DecimalField(max_digits=8, decimal_places=2)

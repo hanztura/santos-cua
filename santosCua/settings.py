@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     'compliance.apps.ComplianceConfig',
     'public.apps.PublicConfig',
     'events.apps.EventsConfig',
+
+    # https://github.com/django-notifications/django-notifications
+    'notifications', 
     
 ]
 
@@ -155,4 +158,6 @@ LOGIN_URL = '/login/'
 LOGIN_EXEMPT_URLS = [
  r'^$',
  r'^home/', # home url*
-] 
+]
+
+NOTIFICATIONS_SOFT_DELETE=True
