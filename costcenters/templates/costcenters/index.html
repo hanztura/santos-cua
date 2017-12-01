@@ -1,0 +1,12 @@
+{% extends "base_santoscua.html" %}
+{% block title %}Cost Centers{% endblock title %}
+
+{% block content %}
+    <h1>Cost Centers Home</h1>
+
+    <ul>
+        <li><a href="{% url 'costcenters:branch_index' %}">Branches</a></li>
+        <li><a href="{% url 'costcenters:project_index' %}">Projects</a></li>
+        <li><a href="{% url 'costcenters:work_index' %}">Works</a></li>
+    </ul>
+{% endblock content %}

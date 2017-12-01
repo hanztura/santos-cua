@@ -37,6 +37,9 @@ urlpatterns = [
 
     url(r'^compliance/', include('compliance.urls')),
 
+    url(r'^costcenters/', include('costcenters.urls')),
+    url(r'^dtr/', include('dtr.urls')),
+
 
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
     

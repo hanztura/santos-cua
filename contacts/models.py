@@ -37,7 +37,7 @@ class Contact(models.Model):
 			if self.trade_name:
 				ret = self.trade_name
 			else:
-				ret = self.registered_name
+				ret = self.alias
 		
 		return ret
 	

@@ -3,7 +3,7 @@ from django import forms
 from django.utils import timezone
 
 from employees.models import Employee
-from costcenters.models import SubProject, Work
+from costcenters.models import Project, Work
 
 # timetable, schedule, schedule_timetables
 # Create your models here.
@@ -41,7 +41,7 @@ class ScheduleTimetable(models.Model):
 	minutes_threshold_late_in = models.IntegerField(default=0)
 	minutes_threshold_early_out = models.IntegerField(default=0)
 	minutes_threshold_late_out = models.IntegerField(default=0)
-	sub_project = models.ForeignKey(SubProject, verbose_name='Project', null=True, blank=True)
+	sub_project = models.ForeignKey(Project, verbose_name='Project', null=True, blank=True)
 	work = models.ForeignKey(Work, verbose_name='Scope of work', null=True, blank=True)
 
 	def __str__(self):

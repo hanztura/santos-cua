@@ -1,0 +1,167 @@
+{% extends "base_santoscua.html" %}
+
+{% load  humanize %}
+
+{% block title %}Timetables - DTR{% endblock title %}
+
+{% block nav %}
+    {{ block.super }}
+
+    <!-- new -->
+    <a class="nav-item nav-link" href="{% url model_url_new %}">
+        <i class="fa fa-2x fa-plus text-white" title="New"></i>
+    </a>
+
+{% endblock nav %}
+
+{% block head %}
+    <style type="text/css">
+        .model-icon{
+            font-size: 40px;
+            color: black;
+        }
+        .pager li.active > a, .pager li.active > span{
+            color: #fff;
+            background-color:#212121;
+            border-color: #212121;
+            pointer-events:none;
+        }
+        .img-avatar {
+            min-width: 150px;
+            min-height: 200px;
+        }
+    </style>
+{% endblock head %}
+
+{% block content %}
+    
+    <h1 class="">DTR Timetables- List</h1>
+    
+    {% if messages %}
+    <div class="row flex-spaces">
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}{% if not message.tags %}info{% endif %} alert-dismissible fade show " role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <strong>Well done!</strong> {{ message }}.
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- search box -->
+    {% include 'includes/index_search.html' %}
+
+
+        <div class="container">
+        {% if model_list %}
+            <!-- pagination top -->
+            {% include 'includes/index_pagination.html' with model_list=model_list model_name='timetables' %}
+
+            {# table list #}
+            <div class="">
+                <table class="table table-condensed table-bordered table-hover table-striped color-black">
+                    <thead class="table-inverse">
+                        <tr class="text-capitalize ">
+                            <th class="text-center " colspan=2>time</th>
+                            <th class="text-center " colspan=3>number of hours</th>
+                            <th class="text-center " rowspan="2">remarks</th>
+                            <th class="text-center " rowspan="2">actions</th>
+                        </tr>
+                        <tr class="text-capitalize ">
+                            <th class="text-center ">in</th>
+                            <th class="text-center ">out</th>
+                            <th class="text-center text-uppercase" title="NON-paid Break">npb</th>
+                            <th class="text-center " title="Scheduled">sched</th>
+                            <th class="text-center ">paid</th>
+                        </tr>
+                    </thead>
+                        {% for record in model_list %}
+                            <tr>
+                                <!-- time-in -->
+                                <td class="text-center">
+                                    <a href="{% url model_url_detail record.id %}" target="_blank" title="view timetable detail">
+                                    {{ record.time_in }}
+                                    </a>
+                                </td>
+
+                                <!-- time-out -->
+                                <td class="text-center">
+                                    <a href="{% url model_url_detail record.id %}" target="_blank" title="view timetable detail">
+                                    {{ record.time_out}}
+                                    </a>
+                                </td>
+
+                                <!-- hours npb -->
+                                <td class="text-center">
+                                    {{ record.hours_npb }}
+                                </td>
+
+                                <!-- hours scheduled -->
+                                <td class="text-center">
+                                    {{ record.hours_scheduled }}
+                                </td>
+
+                                <!-- hours paid -->
+                                <td class="text-center">
+                                    {{ record.hours_paid }}
+                                </td>
+
+                                <!-- remarks -->
+                                <td class="">
+                                    {{ record.remarks }}
+                                </td>
+
+                                <!-- actions -->
+                                <td class="text-center">
+
+                                    <a class="btn btn-outline-default action-toggle-buttons" data-toggle="collapse" href="#id-table-actions-{{forloop.counter}}" aria-expanded="false" aria-controls="id-table-actions-{{forloop.counter}}">
+                                      <i class="fa fa-angle-double-down actions-toggle-icons"></i>
+                                    </a>
+
+                                    <div class="collapse" id="id-table-actions-{{forloop.counter}}">
+                                      <div class="card card-block">
+
+                                        <form id='id-form-delete-{{forloop.counter}}' action="{% url model_url_destroy record.id %}" method="post">
+
+                                            {% csrf_token %}
+                                            <button form='id-form-delete-{{forloop.counter}}' class="action-delete btn btn-outline-danger" type="submit" title="delete">
+                                                <i class="fa fa fa-trash-o" ></i>
+                                            </button>
+                                        </form> <!-- delete -->
+
+                                      </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- pagination bottom --> 
+            {% include 'includes/index_pagination.html' with model_list=model_list model_name='timetables' %}
+        {% endif %}
+        
+        <!-- if recordset is blank -->
+        {% if not model_list  %}
+            {% include 'includes/index_no_record.html' %}
+        {% endif %}
+        </div>
+
+
+{% endblock content %}
+
+{% block script %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('.action-toggle-buttons').click(function(){
+                $(this).toggle()
+            })
+        })
+    </script>
+{% endblock script %}

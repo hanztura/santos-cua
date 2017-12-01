@@ -1,0 +1,69 @@
+{% extends "base_santoscua.html" %}
+
+{% load static %}
+
+{% block title %}{{ record.alias|upper }} Work - Cost Center {% endblock title %}
+
+{% block nav %}
+    {{ block.super }}
+
+    <!-- list -->
+    <a class="nav-item nav-link text-white" href="{% url 'costcenters:work_index' %}">
+        <i class="fa fa-2x fa-list-ul" title="Works"></i>
+    </a>
+
+    <!-- delete -->
+    <a class="nav-item nav-link text-white" href="{% url 'costcenters:work_destroy' record.id %}">
+        <i class="fa fa-2x fa-trash " title="Delete"></i>
+    </a>
+{% endblock nav %}
+
+{% block head %}
+    <style type="text/css">
+        .avatar {
+            border:2px solid #212121;
+        }            
+    </style>    
+{% endblock head %}
+
+{% block content %}
+     <h1>C.C. Work- Detail</h1>
+
+    <form enctype="multipart/form-data" action="{% url 'costcenters:work_update' record.id %}" method="post" class="form">
+        {% csrf_token %}
+
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <a data-toggle="collapse" href="#id-div-work" aria-expanded="true">
+                    <div class="panel-heading bg-inverse color-gray">
+                        <h4 class="panel-title">
+                            Work Info
+                        </h4>
+                    </div>
+                    
+                </a>
+            <div id="id-div-work" aria-expanded="true" class="collapse show" >
+                <div class="panel-body">
+                    <table class="table table-condensed table-bordered" id="id-table-work">
+                        <tbody>
+                            {{ form.as_table|lower }}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- submit button -->
+        <input class="action-save btn-success btn-block border-5" type="submit" name="save" value="Save" id='id-bottom'>
+        <input class="action-save btn-success btn-block border-5" type="submit" name="saveandcontinue" value="Save and continue editing">
+    </form>
+{% endblock content %}
+
+{% block script %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            
+        })
+    </script>
+{% endblock script %}

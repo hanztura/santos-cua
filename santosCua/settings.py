@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize', #https://stackoverflow.com/questions/346467/format-numbers-in-django-templates
 
     'contacts.apps.ContactsConfig',
     'employees.apps.EmployeesConfig',
@@ -47,6 +48,8 @@ INSTALLED_APPS = [
     'compliance.apps.ComplianceConfig',
     'public.apps.PublicConfig',
     'events.apps.EventsConfig',
+    'costcenters.apps.CostcentersConfig',
+    'dtr.apps.DtrConfig',
 
     # https://github.com/django-notifications/django-notifications
     'notifications', 

@@ -6,11 +6,11 @@ from django.forms import model_to_dict
 # pagination
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from .models import Employee
+from .models import Employee, Salary
 from contacts.models import Contact
 
 # forms
-from .forms import EmployeeForm
+from .forms import EmployeeForm, SalaryForm
 
 
 def index(request):
@@ -132,3 +132,94 @@ def destroy(request, id):
 
     employee.save()
     return HttpResponseRedirect(reverse('employees:index'))
+
+
+class Salaries():
+    """
+
+    """
+
+    def index(request):
+        q = request.GET.get('q')
+        page = request.GET.get('page')
+
+        # if search query is BLANK or NULL
+        if not q:
+            q = ''
+            salary_list = Salary.objects.filter(employee__abbr__contains=q)
+        else:
+            salary_list = Salary.objects.filter(employee__abbr__contains=q)[:10]
+
+        paginator = Paginator(salary_list, 10)
+
+        try:
+            salaries = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            salaries = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            salaries = paginator.page(paginator.num_pages)
+
+        context = {
+            'model_list': salaries,
+            'page': page,
+            'q': q,
+            'index_url': 'employees:salary_index',
+            'search_placeholder': 'type employee abbr'
+        }
+
+        return render(request, 'employees/salaries/index.html', context)
+
+    def detail(request, id):
+        salary = get_object_or_404(Salary, pk=id)
+
+        form = SalaryForm(
+            instance=salary,
+            initial=model_to_dict(salary),
+        )
+
+
+        context = {
+            'form' : form,
+            'record': salary,
+            'str_record_id': str(salary.id),
+        }
+
+        return render(
+            request,
+            'employees/salaries/detail.html',
+            context
+        )
+
+    def update(request, id):
+        if request.method == 'POST':
+            salary = get_object_or_404(Salary, pk=id)
+            form = SalaryForm(request.POST, instance=salary)
+            
+            context = {
+                'form' : form,
+                'record': salary,
+            }
+
+            fail = render(request, 'employees/salaries/detail.html', context)
+
+            if form.has_changed():
+                if form.is_valid():
+                    form.save()
+                else:    
+                    return fail
+
+            if request.POST.get('save'):
+                return HttpResponseRedirect(reverse('employees:salary_index'))
+            else:
+                # save and continue
+                return HttpResponseRedirect(reverse('employees:salary_detail', args=(salary.id,)))
+
+
+    def destroy(request, id):
+        salary = Salary.objects.get(id=id)
+        # salary.is_deleted = True
+
+        salary.delete()
+        return HttpResponseRedirect(reverse('employees:salary_index'))

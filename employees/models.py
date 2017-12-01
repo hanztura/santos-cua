@@ -37,11 +37,10 @@ class Salary(models.Model):
         (2, 'Periodic'),
     ]
 
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name='Name')
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name='Name', related_name='salaries')
     date_start = models.DateField(default=timezone.now)
     date_end = models.DateField(null=True, blank=True)
     payroll_type = models.IntegerField(
-        max_length = 2,
         default = 2,
         choices=payroll_type_choices,
     )
@@ -49,3 +48,11 @@ class Salary(models.Model):
     monthly_rate = models.DecimalField(max_digits=8, decimal_places=2)
     daily_rate = models.DecimalField(max_digits=8, decimal_places=2)
     hourly_rate = models.DecimalField(max_digits=8, decimal_places=2)
+
+    @property
+    def get_payroll_type(self):
+        for payroll_type in self.payroll_type_choices:
+            if payroll_type[0] == self.payroll_type:
+                ret = payroll_type[1]
+                break
+        return ret
