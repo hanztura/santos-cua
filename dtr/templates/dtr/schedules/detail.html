@@ -1,0 +1,141 @@
+{% extends "base_santoscua.html" %}
+
+{% load static %}
+
+{% block title %}{{ record.employee.abbr|upper }} on {{ record.date }} {{ model_name|title }} - DTR {% endblock title %}
+
+{% block nav %}
+    {{ block.super }}
+
+    <!-- list -->
+    <a class="nav-item nav-link text-white" href="{% url model_url_index %}">
+        <i class="fa fa-2x fa-list-ul" title="{{ model_name_plural }}"></i>
+    </a>
+
+    <!-- delete -->
+    <a class="nav-item nav-link text-white" href="{% url model_url_destroy record.id %}">
+        <i class="fa fa-2x fa-trash " title="Delete"></i>
+    </a>
+{% endblock nav %}
+
+{% block head %}
+    <style type="text/css">
+        .avatar {
+            border:2px solid #212121;
+        }            
+    </style>    
+{% endblock head %}
+
+{% block content %}
+     <h1>DTR Timetable- Detail</h1>
+
+    <form enctype="multipart/form-data" action="{% url model_url_update record.id %}" method="post" class="form">
+        {% csrf_token %}
+
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <a data-toggle="collapse" href="#id-div-work" aria-expanded="true">
+                    <div class="panel-heading bg-inverse color-gray">
+                        <h4 class="panel-title">
+                            {{ model_name|title }} Info
+                        </h4>
+                    </div>
+                    
+                </a>
+            <div id="id-div-work" aria-expanded="true" class="collapse show" >
+                <div class="panel-body">
+                    <table class="table table-condensed table-bordered" id="id-table-work">
+                        <tbody>
+                            {{ form }}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <a data-toggle="collapse" href="#id-div-timetable" >
+                    <div class="panel-heading bg-inverse color-gray">
+                        <h4 class="panel-title">
+                            Timetables
+                        </h4>
+                    </div>
+                    
+                </a>
+            <div id="id-div-timetable" class="panel-collapse collapse fade show">
+                <div class="panel-body">
+                    <table class="table table-sm table-condensed table-bordered" id="id-table-schedule-timetable">
+                        <!-- <caption >Phone</caption> -->
+                        
+                        {{ formset_1.management_form }}
+
+                        {% for form in formset_1.forms %}
+                            {% if forloop.first %}
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" rowspan="2">{{ form.timetable.label }}</th>
+                                        <th class="text-center" colspan="4">Minutes Threshold</th>
+                                        <th class="text-center" rowspan="2">Delete</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-center">{{ form.minutes_threshold_early_in.label|title }}</th>
+                                        <th class="text-center">{{ form.minutes_threshold_late_in.label|title }}</th>
+                                        <th class="text-center">{{ form.minutes_threshold_early_out.label|title }}</th>
+                                        <th class="text-center">{{ form.minutes_threshold_late_out.label|title }}</th>
+                                    </tr>
+                                </thead>
+                            {% endif %}
+                            <tr class="{% cycle 'row1' 'row2' %} formset_row">
+                                {% for field in form.visible_fields %}
+                                    <td>
+                                        {# Include the hidden fields in the form #}
+                                        {% if forloop.first %}
+                                            {% for hidden in form.hidden_fields %}
+                                                {{ hidden }}
+                                            {% endfor %}
+                                        {% endif %}
+                                        {{ field.errors.as_ul }}
+                                        {{ field }}
+                                        
+                                    </td>
+                                {% endfor %}
+                            </tr>
+
+                            {% if forloop.last %}
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="5" class="text-right">
+                                            <button class="btn btn-primary" title="add row"  type="button" id="id-button-add-row-schedule-timetable"><i class="fa fa-2x fa-plus"></i></button>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            {% endif %}
+
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- submit button -->
+        <input class="action-save btn-success btn-block border-5" type="submit" name="save" value="Save" id='id-bottom'>
+        <input class="action-save btn-success btn-block border-5" type="submit" name="saveandcontinue" value="Save and continue editing">
+    </form>
+{% endblock content %}
+
+{% block script %}
+    <script type="text/javascript" src="{% static 'js/project_common.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('#id-button-add-row-schedule-timetable').click(function() {
+                cloneMore('#id-table-schedule-timetable tbody tr:last', 'scheduletimetable_set');
+            })
+            
+        })
+    </script>
+{% endblock script %}

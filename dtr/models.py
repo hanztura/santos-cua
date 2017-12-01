@@ -17,7 +17,7 @@ class Timetable(models.Model):
 	is_ot = models.BooleanField(default=False, verbose_name='OT')
 
 	def __str__(self):
-		ret = self.remarks + ' | ' + 'IN: ' + str(self.time_in) + ' OUT: ' + str(self.time_out)
+		ret = str(self.remarks) + ' | ' + 'IN: ' + str(self.time_in) + ' OUT: ' + str(self.time_out)
 		
 		if self.is_ot:
 			ret = '(OVERTIME) ' + ret
@@ -29,7 +29,7 @@ class Schedule(models.Model):
 	date = models.DateField()
 	is_rest_day = models.BooleanField(default=False)
 	remarks	= models.CharField(max_length=100, null=True, blank=True)
-	timetables = models.ManyToManyField(Timetable, through='ScheduleTimetable')
+	# timetables = models.ManyToManyField(Timetable, through='ScheduleTimetable')
 
 	def __str__(self):
 		return self.employee.contact.full_name
@@ -37,10 +37,10 @@ class Schedule(models.Model):
 class ScheduleTimetable(models.Model):
 	schedule = models.ForeignKey(Schedule)
 	timetable = models.ForeignKey(Timetable)
-	minutes_threshold_early_in = models.IntegerField(default=0)
-	minutes_threshold_late_in = models.IntegerField(default=0)
-	minutes_threshold_early_out = models.IntegerField(default=0)
-	minutes_threshold_late_out = models.IntegerField(default=0)
+	minutes_threshold_early_in = models.IntegerField(default=0, blank=True)
+	minutes_threshold_late_in = models.IntegerField(default=0, blank=True)
+	minutes_threshold_early_out = models.IntegerField(default=0, blank=True)
+	minutes_threshold_late_out = models.IntegerField(default=0, blank=True)
 	sub_project = models.ForeignKey(Project, verbose_name='Project', null=True, blank=True)
 	work = models.ForeignKey(Work, verbose_name='Scope of work', null=True, blank=True)
 
