@@ -27,14 +27,27 @@
 {% endblock head %}
 
 {% block content %}
-     <h1>DTR Timetable- Detail</h1>
-
+     <h1>{{ model_app|upper }} {{ model_name|title }}- Detail</h1>
+    
+    {% if messages %}
+    <div class="row flex-spaces">
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}{% if not message.tags %}info{% endif %} alert-dismissible fade show " role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <strong>Well done!</strong> {{ message }}.
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
     <form enctype="multipart/form-data" action="{% url model_url_update record.id %}" method="post" class="form">
         {% csrf_token %}
 
         <div class="panel-group">
             <div class="panel panel-default">
-                <a data-toggle="collapse" href="#id-div-work" aria-expanded="true">
+                <a data-toggle="collapse" href="#id-div-attendance" aria-expanded="true">
                     <div class="panel-heading bg-inverse color-gray">
                         <h4 class="panel-title">
                             {{ model_name|title }} Info
@@ -42,9 +55,9 @@
                     </div>
                     
                 </a>
-            <div id="id-div-work" aria-expanded="true" class="collapse show" >
+            <div id="id-div-attendance" aria-expanded="true" class="collapse show" >
                 <div class="panel-body">
-                    <table class="table table-condensed table-bordered" id="id-table-work">
+                    <table class="table table-condensed table-bordered" id="id-table-attendance">
                         <tbody>
                             {{ form }}
                         </tbody>
@@ -54,20 +67,20 @@
             </div>
         </div>
 
-        <!-- timetables -->
+        <!-- logs -->
         <div class="panel-group">
             <div class="panel panel-default">
-                <a data-toggle="collapse" href="#id-div-timetable" >
+                <a data-toggle="collapse" href="#id-div-logs" >
                     <div class="panel-heading bg-inverse color-gray">
                         <h4 class="panel-title">
-                            Timetables
+                            Logs
                         </h4>
                     </div>
                     
                 </a>
-            <div id="id-div-timetable" class="panel-collapse collapse fade show">
+            <div id="id-div-logs" class="panel-collapse collapse fade show">
                 <div class="panel-body">
-                    <table class="table table-sm table-condensed table-bordered" id="id-table-schedule-timetable">
+                    <table class="table table-sm table-condensed table-bordered" id="id-table-attendance-logs">
                         
                         {{ formset_1.management_form }}
 
@@ -75,15 +88,18 @@
                             {% if forloop.first %}
                                 <thead>
                                     <tr>
-                                        <th class="text-center" rowspan="2">{{ form.timetable.label }}</th>
-                                        <th class="text-center" colspan="4">Minutes Threshold</th>
+                                        <th class="text-center" rowspan="2">{{ form.schedule_timetable.label }}</th>
+                                        <th class="text-center" colspan="2">Final Date/Time</th>
+                                        <th class="text-center" colspan="4">Minutes</th>
                                         <th class="text-center" rowspan="2">Delete</th>
                                     </tr>
                                     <tr>
-                                        <th class="text-center">{{ form.minutes_threshold_early_in.label|title }}</th>
-                                        <th class="text-center">{{ form.minutes_threshold_late_in.label|title }}</th>
-                                        <th class="text-center">{{ form.minutes_threshold_early_out.label|title }}</th>
-                                        <th class="text-center">{{ form.minutes_threshold_late_out.label|title }}</th>
+                                        <th class="text-center">{{ form.final_date_time_in.label|title }}</th>
+                                        <th class="text-center">{{ form.final_date_time_out.label|title }}</th>
+                                        <th class="text-center">{{ form.minutes_late_in.label|title }}</th>
+                                        <th class="text-center">{{ form.minutes_early_out.label|title }}</th>
+                                        <th class="text-center">{{ form.minutes_night_premium.label|title }}</th>
+                                        <th class="text-center">{{ form.minutes_ot_premium.label|title }}</th>
                                     </tr>
                                 </thead>
                             {% endif %}
@@ -107,7 +123,7 @@
                                 <tfoot>
                                     <tr>
                                         <td colspan="5" class="text-right">
-                                            <button class="btn btn-primary" title="add row"  type="button" id="id-button-add-row-schedule-timetable"><i class="fa fa-2x fa-plus"></i></button>
+                                            <button class="btn btn-primary" title="add row"  type="button" id="id-button-add-row-attendance-logs"><i class="fa fa-2x fa-plus"></i></button>
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -131,8 +147,8 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-            $('#id-button-add-row-schedule-timetable').click(function() {
-                cloneMore('#id-table-schedule-timetable tbody tr:last', 'scheduletimetable_set');
+            $('#id-button-add-row-attendance-logs').click(function() {
+                cloneMore('#id-table-attendance-logs tbody tr:last', 'attendancelog_set');
             })
             
         })

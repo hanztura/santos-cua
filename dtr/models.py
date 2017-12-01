@@ -4,6 +4,7 @@ from django.utils import timezone
 
 from employees.models import Employee
 from costcenters.models import Project, Work
+from public.utils import get_choices_value
 
 # timetable, schedule, schedule_timetables
 # Create your models here.
@@ -24,6 +25,7 @@ class Timetable(models.Model):
 
 		return ret
 
+
 class Schedule(models.Model):
 	employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
 	date = models.DateField()
@@ -33,6 +35,7 @@ class Schedule(models.Model):
 
 	def __str__(self):
 		return self.employee.contact.full_name
+
 
 class ScheduleTimetable(models.Model):
 	schedule = models.ForeignKey(Schedule)
@@ -47,17 +50,24 @@ class ScheduleTimetable(models.Model):
 	def __str__(self):
 		return ' | '.join([str(self.schedule.employee), str(self.schedule.date) ,str(self.timetable)])
 
+
 class Log(models.Model):
 	log_type_choices = [
-		('na', 'None'),
-		('in', 'In'),
-		('ou', 'Out'),
-		('oti', 'Overtime - In'),
-		('oto', 'Overtime - Out'),
+		(1, 'None'),
+		(2, 'In'),
+		(3, 'Out'),
+		(4, 'Overtime - In'),
+		(5, 'Overtime - Out'),
 	]
+
 	employee = models.ForeignKey(Employee)
 	date_time = models.DateTimeField(default=timezone.now)
-	log_type = models.CharField(default='NA', choices=log_type_choices, max_length=3)
+	log_type = models.IntegerField(default='NA', choices=log_type_choices)
+
+	@property
+	def get_log_type(self):
+		return get_choices_value(self.log_type_choices, self.log_type)
+
 
 class Attendance(models.Model):
 	employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
@@ -98,6 +108,7 @@ class Attendance(models.Model):
 			ret = ret + alog.minutes_ot_premium
 		return ret
 	total_minutes_ot_premium.fget.short_description = u'ot'
+
 
 class AttendanceLog(models.Model):
 	attendance = models.ForeignKey(Attendance)
