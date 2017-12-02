@@ -32,13 +32,14 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls, name='admin'),
     
     url(r'^contacts/', include('contacts.urls')),
-
     url(r'^employees/', include('employees.urls')),
 
     url(r'^compliance/', include('compliance.urls')),
 
-    url(r'^costcenters/', include('costcenters.urls')),
-    url(r'^dtr/', include('dtr.urls')),
+
+    url(r'^payrollone/payroll/costcenters/', include('costcenters.urls')),
+    url(r'^payrollone/hr/dtr/', include('dtr.urls')),
+    url(r'^payrollone/hr/leave-management/', include('leaves.urls')),
 
 
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),

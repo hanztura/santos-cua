@@ -1,0 +1,11 @@
+{% extends "base_santoscua.html" %}
+{% block title %}Leave Management{% endblock title %}
+
+{% block content %}
+    <h1>Leave Management</h1>
+
+    <ul>
+        <li><a href="{% url 'leaves:issuance_index' %}">Issuance</a></li>
+        <li><a href="{% url 'leaves:application_index' %}">Application</a></li>
+    </ul>
+{% endblock content %}

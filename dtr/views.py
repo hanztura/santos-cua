@@ -1,12 +1,10 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponse
-from django.urls import reverse
-from django.forms import model_to_dict
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.db.models import Q
-
-# pagination
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.forms import model_to_dict
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 
 from .models import Timetable, Schedule, Log, Attendance, AttendanceLog
 from .forms import TimetableForm, ScheduleTimetableFormSet, LogForm, AttendanceForm, AttendanceLogFormSet

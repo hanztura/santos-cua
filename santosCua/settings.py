@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'events.apps.EventsConfig',
     'costcenters.apps.CostcentersConfig',
     'dtr.apps.DtrConfig',
+    'leaves.apps.LeavesConfig',
 
     # https://github.com/django-notifications/django-notifications
     'notifications', 
