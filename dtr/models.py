@@ -119,3 +119,4 @@ class AttendanceLog(models.Model):
 	minutes_early_out = models.IntegerField(default=0)
 	minutes_night_premium = models.IntegerField(default=0)
 	minutes_ot_premium = models.IntegerField(default=0)
+	is_absent = models.BooleanField(default=False)
