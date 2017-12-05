@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from . import views
-from .models import Timetable, Schedule, Log, Attendance, AttendanceLog
+from .models import Timetable, Schedule, ScheduleTimetable, Log, Attendance, AttendanceLog
 from .forms import TimetableForm, ScheduleForm, LogForm, AttendanceForm, AttendanceLogFormSet
 
 

@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django import forms
 from django.utils import timezone
@@ -6,7 +7,6 @@ from employees.models import Employee
 from costcenters.models import Project, Work
 from public.utils import get_choices_value
 
-# timetable, schedule, schedule_timetables
 # Create your models here.
 class Timetable(models.Model):
 	time_in = models.TimeField('In')
@@ -61,8 +61,9 @@ class Log(models.Model):
 	]
 
 	employee = models.ForeignKey(Employee)
-	date_time = models.DateTimeField(default=timezone.now)
+	date_time = models.DateTimeField(default=datetime.now)
 	log_type = models.IntegerField(default='NA', choices=log_type_choices)
+	is_used = models.BooleanField(default=False)
 
 	@property
 	def get_log_type(self):
