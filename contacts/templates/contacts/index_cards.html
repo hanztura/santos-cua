@@ -55,7 +55,7 @@
             {% with alias=contact.alias|upper %}          
               <div class="card" style="width: 20rem;">
 
-                <div class="card-header"">
+                <div class="card-header">
                     <span class="badge default" popover="Click to toggle quick details of {{ contact.alias|upper }}"><a href="#id-contact-custom-{{ contact.id }}" data-toggle="collapse" data-target="#id-collapse-contact-{{ contact.id }}" style="color:#fff;text-decoration:none;">{{ alias }}</a></span>
 
                     {% if contact.is_client %}
@@ -98,7 +98,7 @@
                       <div class="card-body" >
                         <h4 class="card-title text-center">
                             <a class="color-black" href="{% url 'contacts:detail' contact.id %}" target="_blank" title="view {{ alias }}" id="id-contact-custom-{{ contact.id }}">
-                                {{contact|title}}
+                                {{contact|upper}}
                             </a>
                         </h4>
 
@@ -110,15 +110,9 @@
                       </div>  <!-- card body -->
 
                         <div class="card-footer">
-                            <form id='id-form-delete-{{forloop.counter}}' action="{% url 'contacts:destroy' contact.id %}" method="post">
-
-                                {% csrf_token %}
-                                <button form='id-form-delete-{{forloop.counter}}' class="action-delete btn btn-outline-danger" type="submit" title="delete">
+                                <button class="btn btn-outline-danger" type="button" title="delete" data-toggle="modal"  data-target="#modal-confirm-submit" data-title="DELETE {{ contact.alias|title }}" data-url="{% url 'contacts:destroy' contact.id %}">
                                     <i class="fa fa fa-trash-o" ></i>
                                 </button>
-                                
-                            </form>
-
                         </div>
 
                 </div>

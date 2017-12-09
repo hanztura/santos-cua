@@ -1,16 +1,35 @@
+<div class="dropdown">
+    <span class="text-primary-color dropdown-toggle" data-toggle="dropdown" id="usermanagement" aria-expanded="false" aria-haspopup="true">
+    {% if user.employee.contact.image %}
+        <img class="rounded-circle m-0 display-inline" src="/media/{{ user.employee.contact.image }}" width="40px" height="40px" alt="{{ user.employee.abbr }} image">
+    {% endif %}
 
-                    
-<form action="{% url 'public:logout' %}" method="post" class="form-inline">
-{% csrf_token %}
+    <!-- if no uploaded image -->
+    {% if not user.employee.contact.image %}
+        <img  class="rounded-circle m-0 display-inline" src="/media/contacts/images/empty.png" width="40px" height="40px" alt="{{ user.employee.abbr }} image">
+    {% endif %}
 
-{% if user.employee.contact.image %}
-    <img class="rounded-circle m-0" src="/media/{{ user.employee.contact.image }}" width="40px" height="40px" alt="{{ user.employee.abbr }} image">
-{% endif %}
+    {{ user.username|upper }}
+    </span>
+  <div class="dropdown-menu m-0 p-0" aria-labelledby="usermanagement">
+        <div class="row dropdown-item m-0">
+            <div class="col-3 m-0 p-0">
+            <i class="fa fa-bell"></i>
+            </div>
 
-<!-- if no uploaded image -->
-{% if not user.employee.contact.image %}
-    <img  class="rounded-circle m-0" src="/media/contacts/images/empty.png" width="40px" height="40px" alt="{{ user.employee.abbr }} image">
-{% endif %}
+            <div class="col-9 m-0 p-0">
+            <a href="inbox/notifications/">notifications</a>
+            </div>
+        </div>
+        <div class="row dropdown-item m-0">
+            <div class="col-3 m-0 p-0">
+            <i class="fa fa-sign-out"></i>
+            </div>
 
-<input type="submit" value="logout" class="btn btn-link cursor-pointer  text-info">
-</form>
+            <div class="col-9 m-0 p-0">
+            <a href="#" class="" data-toggle="modal" data-target="#modal-confirm-action" data-title="HOME" data-url="{% url 'public:logout' %}">logout</a>
+            </div>
+        </div>
+  </div>
+</div>
+
