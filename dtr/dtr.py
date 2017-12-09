@@ -1,11 +1,10 @@
 import datetime
-from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Sum
 
 from .models import Schedule, Log, Attendance, AttendanceLog
 from employees.models import Employee
 
-def compute_dtr_2(employee, schedule_timetable, log_model):
+def compute_dtr(employee, schedule_timetable, LogModel):
     ret = {
         'fields': (
             'schedule_timetable_id',
@@ -20,42 +19,43 @@ def compute_dtr_2(employee, schedule_timetable, log_model):
             'log_id_in',
         ),
 
-        'data': []
+        'data': {}
     }
 
+    # schedule variables
     schedule_timetable_id = schedule_timetable.id
     date = schedule_timetable.schedule.date
-    sched_datetime = datetime.datetime(year=date.year, month=date.month, day=date.day) # convert date INTO datetime
-    date_before = date - datetime.timedelta(days=1)
-    date_after = date + datetime.timedelta(days=1)
 
+    # threshold minutes
     minutes_threshold_early_in = schedule_timetable.minutes_threshold_early_in
     minutes_threshold_late_in = schedule_timetable.minutes_threshold_late_in
     minutes_threshold_early_out = schedule_timetable.minutes_threshold_early_out
     minutes_threshold_late_out = schedule_timetable.minutes_threshold_late_out
-    
-    schedule_time_in = schedule_timetable.timetable.time_in
-    schedule_time_out = schedule_timetable.timetable.time_out
-    time_in_hours = schedule_time_in.hour # time in HOUR sample 08:30, this is 8
-    time_in_minutes = schedule_time_in.minute # time in MINUTE sample 08:30, this is 30
-    time_out_hours = schedule_time_out.hour # time in HOUR sample 18:00, this is 18
-    time_out_minutes = schedule_time_out.minute # time in MINUTE sample 18:00, this is 0
 
-    schedule_datetime_in = sched_datetime + datetime.timedelta(hours=time_in_hours, minutes=time_in_minutes)
-    # check if time out falls on the next day
-    if schedule_time_in >= schedule_time_out:
-        time_out_hours = time_out_hours + 24
-        schedule_datetime_out = sched_datetime + datetime.timedelta(hours=time_out_hours, minutes=time_out_minutes)
+    # schedule datetime
+    datetime_inout = schedule_timetable.get_datetime_inout
+    schedule_datetime_in = datetime_inout['in']
+    schedule_datetime_out = datetime_inout['out']
+
+    # schedule datetime THRESHOLDS
+    if schedule_datetime_in:
+        threshold_datetime_early_in = schedule_datetime_in - datetime.timedelta(minutes=minutes_threshold_early_in)
+        threshold_datetime_late_in = schedule_datetime_in + datetime.timedelta(minutes=minutes_threshold_late_in)
     else:
-        schedule_datetime_out = sched_datetime + datetime.timedelta(hours=time_out_hours, minutes=time_out_minutes)
+        threshold_datetime_early_in = None
+        threshold_datetime_late_in = None
 
-    threshold_datetime_early_in = schedule_datetime_in - datetime.timedelta(minutes=minutes_threshold_early_in)
-    threshold_datetime_late_in = schedule_datetime_in + datetime.timedelta(minutes=minutes_threshold_late_in)
-    threshold_datetime_early_out = schedule_datetime_out - datetime.timedelta(minutes=minutes_threshold_early_out)
-    threshold_datetime_late_out = schedule_datetime_out + datetime.timedelta(minutes=minutes_threshold_late_out)
+    if schedule_datetime_out:
+        threshold_datetime_early_out = schedule_datetime_out - datetime.timedelta(minutes=minutes_threshold_early_out)
+        threshold_datetime_late_out = schedule_datetime_out + datetime.timedelta(minutes=minutes_threshold_late_out)
+    else:
+        threshold_datetime_early_out = None
+        threshold_datetime_late_out = None
 
-    logs_filtered = log_model.objects.filter(employee=employee, is_used=False, date_time__range=(threshold_datetime_early_in, threshold_datetime_late_out)).order_by('date_time', 'log_type')
+    # select logs with appropriate filters
+    logs_filtered = LogModel.objects.filter(employee=employee, is_used=False, date_time__range=(threshold_datetime_early_in, threshold_datetime_late_out)).order_by('date_time', 'log_type')
 
+    is_ot = schedule_timetable.timetable.is_ot
     is_absent = True
     final_date_time_in = None
     final_date_time_out = None
@@ -74,11 +74,26 @@ def compute_dtr_2(employee, schedule_timetable, log_model):
             threshold_datetime_late_out))
         )
 
-        # means there are logs
+        # means there are logs BOTH in/out
         if logs_filtered_in.exists() or logs_filtered_out.exists():
             is_absent = False
+        # means there are NO logs BOTH in/out within THRESHOLDS
         else:
-            # end process and return null value
+            # end process and return absent data
+            data = {
+                'schedule_timetable_id': schedule_timetable_id,
+                'final_date_time_in': None,
+                'final_date_time_out': None,
+                'is_absent': True,
+                'late_in': 0,
+                'early_out': 0,
+                'ot_hours': 0,
+                'ot_premium_hours': 0,
+                'log_id_in': None,
+                'log_id_out': None,
+            }
+
+            ret['data'] = data
             return ret
 
         # loop through logs and try to assign into schedule timetables AS attendance item
@@ -107,7 +122,7 @@ def compute_dtr_2(employee, schedule_timetable, log_model):
             log_datetime_cleaned = log.date_time.replace(second=0, microsecond=0, tzinfo=None) # round down to nearest minute
 
             if (not log_datetimes['data_out']) or (log_datetime_cleaned > log_datetimes['data_out']['log_datetime_cleaned']):
-                log_timedelta = log_datetime_cleaned - schedule_datetime_in
+                log_timedelta = log_datetime_cleaned - schedule_datetime_out
                 data = {
                     'log_id': log.id,
                     'log_datetime_cleaned': log_datetime_cleaned,
@@ -115,35 +130,6 @@ def compute_dtr_2(employee, schedule_timetable, log_model):
                     'timedelta': log_timedelta,
                 }
                 log_datetimes['data_out'] = data # set to log_datetimes
-
-        # for log in logs_filtered:
-        #     # loop through logs
-        #     log_datetime_cleaned = log.date_time.replace(second=0, microsecond=0, tzinfo=None) # round down to nearest minute
-
-        #     if threshold_datetime_early_in <= log_datetime_cleaned <= threshold_datetime_late_in:
-        #         # if log is within threshold of early_in AND late_in
-        #         log_timedelta = schedule_datetime_in - log_datetime_cleaned
-        #         data = {
-        #             'log_id': log.id,
-        #             'log_datetime_cleaned': log_datetime_cleaned,
-        #             'log_type': 2, # IN
-        #             'schedule_timetable_id': schedule_timetable_id,
-        #             'timedelta': log_timedelta,
-        #         }
-        #         log_datetimes['data'].append(data) # append to log_datetimes
-
-        #     elif threshold_datetime_early_out <= log_datetime_cleaned <= threshold_datetime_late_out:
-        #         # if log is within threshold of early_out AND late_out
-        #         log_timedelta = log_datetime_cleaned - schedule_datetime_out
-        #         data = {
-        #             'log_id': log.id,
-        #             'log_datetime_cleaned': log_datetime_cleaned,
-        #             'log_type': 3, # OUT
-        #             'schedule_timetable_id': schedule_timetable_id,
-        #             'timedelta': log_timedelta,
-        #         }
-        #         log_datetimes['data'].append(data) # append to log_datetimes
-
 
         data = {
             'schedule_timetable_id': schedule_timetable_id,
@@ -164,14 +150,16 @@ def compute_dtr_2(employee, schedule_timetable, log_model):
             log_datetime_in = log_datetimes['data_in']
             
             data['log_id_in'] = log_datetime_in['log_id']
-            
-            # if not late in
+
+            # if NOT late in
             if log_datetime_in['timedelta'].days >= 0:
                 data['final_date_time_in'] = schedule_datetime_in
                 data['late_in'] = 0
+            # if late in
             else:
                 data['final_date_time_in'] = log_datetime_in['log_datetime_cleaned']
                 data['late_in'] = (86400 - log_datetime_in['timedelta'].seconds) / 60 # convert timedelta seconds into minutes
+
         # log_out
         if log_datetimes['data_out']:
             log_datetime_out = log_datetimes['data_out']
@@ -183,70 +171,303 @@ def compute_dtr_2(employee, schedule_timetable, log_model):
                 data['final_date_time_out'] = schedule_datetime_out
                 data['early_out'] = 0
             else:
-                data['final_date_time_in'] = log_datetime_out['log_datetime_cleaned']
+                data['final_date_time_out'] = log_datetime_out['log_datetime_cleaned']
                 data['early_out'] = (86400 - log_datetime_out['timedelta'].seconds) / 60 # convert timedelta seconds into minutes
 
-
-            # if not log_datetime_in:
-            #     ret['data'].append({
-            #         'schedule_timetable_id': schedule_timetable_id,
-            #         'final_date_time_in': final_date_time_in,
-            #         'final_date_time_out': final_date_time_out,
-            #         'is_absent': False,
-            #         'late_in': late_in,
-            #         'early_out': early_out,
-            #         'ot_hours': 0,
-            #         'ot_premium_hours': 0,
-            #         'log_id_in': None,
-            #         'log_id_out': log_datetime_out['log_id'],
-            #     })
-            # elif not log_datetime_out:
         ret['data'] = data
-            # update log so that it will not be used again
-            # log_in = Log.objects.get(pk=log_datetime_in['log_id'])
-            # log_out = Log.objects.get(pk=log_datetime_out['log_id'])
-            # log_in.is_used = True
-            # log_in.save()
-            # log_out.is_used = True
-            # log_out.save()
+    # if NO logs at all for this schedule_timetable
+    else:
+        # end process and return absent data
+        data = {
+            'schedule_timetable_id': schedule_timetable_id,
+            'final_date_time_in': None,
+            'final_date_time_out': None,
+            'is_absent': True,
+            'late_in': 0,
+            'early_out': 0,
+            'ot_hours': 0,
+            'ot_premium_hours': 0,
+            'log_id_in': None,
+            'log_id_out': None,
+        }
 
-    return ret['data']
+        ret['data'] = data
+        
+    return ret
 
-def compute_dtr(employee_ids, dates):
+def compute_dtr_latein(employee_id, schedule_timetable, late_in, AttendanceLogModel):
+    # CURRENTLY, simple value type of grace period
+    ret = {
+        'fields': (
+            'schedule_timetable_id',
+            'minutes_latein_actual',
+            'minutes_late_in',
+        ),
+        'data': {}
+    }
 
-    # get employees and loop through them
-    employee_ids = employee_ids
-    date_list = dates
-    employees = Employee.objects.filter(id__in=employee_ids)
-    for employee in employees:
-        schedules = Schedule.objects.filter(date__in=date_list, employee_id=employee.id)
+    schedule_date = schedule_timetable.schedule.date
+    timetable_grace = schedule_timetable.timetable.grace_late_in
+    # check if grace is NOT null
+    if timetable_grace:
+        grace_type = timetable_grace.grace_type
+        grace_sub_type = timetable_grace.grace_sub_type
+        value_minutes = timetable_grace.value_minutes
+        value_type = timetable_grace.value_type
+    # if no grace period, end process and return default values
+    else:
+        data = {
+            'schedule_timetable_id': schedule_timetable.id,
+            'minutes_latein_actual': late_in,
+            'minutes_late_in': late_in,
+        }
 
-        for date in date_list:
+        ret['data'] = data
+        return ret
 
-            attendance = Attendance.objects.filter(employee_id=employee.id, date=date).first()
-            # if no attendance record yet for the employee AND date THEN create attendance
-            if not attendance:
-                # attendance fields
-                remarks = 'generated by PayrollOne powered by iamhanz.com'
-                attendance = Attendance(employee=employee, date=date, remarks=remarks)
-                attendance.save()
+    if grace_type == 1: # grace type INSTANCE
+        if value_type == 1: # simple
+            if late_in > value_minutes:
+                minutes_late_in = late_in - value_minutes
+            else:
+                minutes_late_in = 0
 
+            data = {
+                'schedule_timetable_id': schedule_timetable.id,
+                'minutes_latein_actual': late_in,
+                'minutes_late_in': minutes_late_in,
+            }
 
-            schedule = schedules.filter(date=date)[0]
-            schedule_timetables = schedule.scheduletimetable_set.all()
-                
-            attendancelogs = []
+            ret['data'] = data
+            return ret
 
-            for sched_timetable in schedule_timetables:
-                final_date_time_in = timezone.now()
-                final_date_time_out = timezone.now()
+        else: # complex TEMPORARY
+            data = {
+                'schedule_timetable_id': schedule_timetable.id,
+                'minutes_latein_actual': late_in,
+                'minutes_late_in': late_in,
+            }
 
-                # create attendancelog and add to attendance
-                attendancelog = AttendanceLog(final_date_time_in=final_date_time_in, final_date_time_out=final_date_time_out, schedule_timetable=sched_timetable)
-                attendancelogs.append(attendancelog)
+            ret['data'] = data
+            return ret
+            
+    elif grace_type == 2: # grace type PERIODIC
+        if value_type == 1: # simple
+            period_type = schedule_timetable.timetable.grace_late_in.grace_sub_type
+            if period_type == 1: # daily
+                periodic_late_actual = AttendanceLogModel.objects.filter(
+                    attendance__date=schedule_date,
+                    attendance__employee_id=employee_id).aggregate(Sum('minutes_late_in_actual')).get('minutes_late_in_actual__sum', 0)
+            elif period_type == 2: # monthly
+                periodic_late_actual = AttendanceLogModel.objects.filter(
+                    attendance__date__month=schedule_date.month,
+                    attendance__employee_id=employee_id).aggregate(Sum('minutes_late_in_actual')).get('minutes_late_in_actual__sum', 0)
+            
+            if not periodic_late_actual:
+                periodic_late_actual = 0
 
-            AttendanceLog.objects.filter(attendance_id=attendance.id).delete()
-            attendance.attendancelog_set.set(attendancelogs, bulk=False)
-            attendance.save()
+            # check if accumulated actual late minutes is  BEYOND allowed grace period
+            if periodic_late_actual >= value_minutes:
+                data = {
+                    'schedule_timetable_id': schedule_timetable.id,
+                    'minutes_latein_actual': late_in,
+                    'minutes_late_in': late_in,
+                }
 
-    return 'done'
+                ret['data'] = data
+                return ret
+            else:
+                value_minutes_remaining = value_minutes - periodic_late_actual
+                # if CURRENT actual minutes late is BIGGER or EQUAL to grace minutes remaing
+                if late_in >= value_minutes_remaining:
+                    minutes_late_in = late_in - value_minutes_remaining
+                # if current actual minutes late is LESS than grace minutes remaing
+                else:
+                    minutes_late_in = 0
+
+                data = {
+                    'schedule_timetable_id': schedule_timetable.id,
+                    'minutes_latein_actual': late_in,
+                    'minutes_late_in': minutes_late_in,
+                }
+
+                ret['data'] = data
+                return ret
+
+        else: # complex TEMPORARY
+            data = {
+                'schedule_timetable_id': schedule_timetable.id,
+                'minutes_latein_actual': late_in,
+                'minutes_late_in': late_in,
+            }
+
+            ret['data'] = data
+            return ret
+
+def compute_dtr_absent(schedule_timetable, leave_application = {}):
+    # returns the following values
+    ret = {
+        'fields': ['is_absent', 'hours_deducted', 'hours_paid', 'leave_application_id'],
+        'data': {}
+    }
+
+    date = schedule_timetable.schedule.date
+    schedule = schedule_timetable.schedule
+    employee = schedule.employee
+    schedule_hours_paid = schedule_timetable.timetable.hours_paid
+
+    # check if restday
+    if schedule.is_rest_day:
+        data = {
+            'is_absent': False,
+            'hours_deducted': 0,
+            'hours_paid': 0,
+            'leave_application_id': None,
+        }
+    # if NOT restday
+    else:
+        # set employee_branch assigned
+        # branch assigned is set on employee schedule_timetable
+        employee_project = schedule_timetable.sub_project
+        employee_branch = employee_project.branch
+        while not employee_branch:
+            employee_project = employee_project.parent
+            employee_branch = employee_project.branch
+
+        # determine holiday
+        employee_branch_city = employee_branch.city
+        holiday = employee_branch_city.holiday_set.filter(date=date).first()
+        if holiday:
+            # determine if holiday is PAY on absent
+            if holiday.pay_on_absent:
+                data = {
+                    'is_absent': True,
+                    'hours_deducted': 0,
+                    'hours_paid': schedule_hours_paid,
+                    'leave_application_id': None,
+                }
+            # if NOT pay on absent
+            else:
+                data = {
+                    'is_absent': True,
+                    'hours_deducted': schedule_hours_paid,
+                    'hours_paid': 0,
+                    'leave_application_id': None,
+                }
+        # if NOT holiday
+        else:
+            # determine if ON leave
+            if leave_application:
+                issued_hours = leave_application['issued_hours']
+                availed_hours = leave_application['availed_hours']
+                available_hours = issued_hours - availed_hours
+                # determine if there is still available leave credits
+                if leave_application['charge_to_issuances'] and available_hours > 0:
+                    # determine if available hours is LESS than hours absent
+                    if available_hours < schedule_hours_paid:
+                        data = {
+                            'is_absent': True,
+                            'hours_deducted': schedule_hours_paid - available_hours,
+                            'hours_paid': available_hours,
+                            'leave_application_id': leave_application['id'],
+                        }
+                    # if available hours is MORE or EQUAL to hours absent THEN hours_deducted is auto ZERO
+                    else:
+                        data = {
+                            'is_absent': True,
+                            'hours_deducted': 0,
+                            'hours_paid': schedule_hours_paid,
+                            'leave_application_id': leave_application['id'],
+                        }
+
+                # if NOT charged to issuances OR there is NO available leave credits
+                else:
+                    data = {
+                        'is_absent': True,
+                        'hours_deducted': schedule_hours_paid,
+                        'hours_paid': 0,
+                        'leave_application_id': leave_application['id'],
+                    }
+            # if NOT on leave
+            else:
+                data = {
+                    'is_absent': True,
+                    'hours_deducted': schedule_hours_paid,
+                    'hours_paid': 0,
+                    'leave_application_id': None,
+                }
+
+    ret['data'] = data
+    return ret
+
+def compute_dtr_ot(schedule_timetable, late_in_minutes, early_out_minutes):
+    # returns the following values
+    ret = {
+        'fields': ['minutes_ot_premium'],
+        'data': {
+            'minutes_ot_premium': 0,
+        }
+    }
+
+    # determine if schedule_timetable is OT timetable
+    if schedule_timetable.timetable.is_ot:
+        schedule_ot_hours = schedule_timetable.timetable.hours_paid
+        schedule_ot_mintues = int(schedule_ot_hours * 60) # round down to nearest integer
+        actual_ot_minutes = schedule_ot_mintues - late_in_minutes, early_out_minutes
+        data = {
+            'minutes_ot_premium': actual_ot_minutes,
+        }
+
+        ret['data'] = data
+
+    return ret
+
+def compute_dtr_night(schedule_date, final_date_time_in, final_date_time_out,):
+    # returns the following values
+    ret = {
+        'fields': ['minutes_night_premium'],
+        'data': {
+            'minutes_night_premium': 0,
+            'message': '',
+        }
+    }
+
+    # time_in_date = final_date_time_in.date
+    # time_in_time = final_date_time_in.replace(second=0, microsecond=0).time
+
+    # time_out_date = final_date_time_out.date
+    # time_out_time = final_date_time_out.replace(second=0, microsecond=0).time
+
+    datetime_night_in = datetime.datetime.combine(schedule_date, datetime.time(hour=22))
+    datetime_nightout_today = datetime.datetime.combine(schedule_date, datetime.time(hour=6))
+    datetime_nightout_tomorrow = datetime.datetime.combine(schedule_date + datetime.timedelta(days=1), datetime.time(hour=6))
+    # determine if shift fall timein < 6AM today OR between 10PM AND Tomorrow 6AM
+    if final_date_time_in < datetime_nightout_today:
+        # check if actual time_out is > 06AM tomorrow
+        if final_date_time_out > datetime_nightout_today:
+            minutes_night_premium = datetime_nightout_today - final_date_time_in
+        else:
+            minutes_night_premium = final_date_time_out - final_date_time_in
+    elif final_date_time_in >= datetime_night_in:
+        # check if actual time_out is > 06AM tomorrow
+        if final_date_time_out > datetime_nightout_tomorrow:
+            minutes_night_premium = datetime_nightout_tomorrow - final_date_time_in
+        else:
+            minutes_night_premium = final_date_time_out - final_date_time_in
+
+    elif final_date_time_out > datetime_night_in:
+        # check if actual time_out is > 06AM tomorrow
+        if final_date_time_out > datetime_nightout_tomorrow:
+            minutes_night_premium = datetime_nightout_tomorrow - datetime_night_in
+        else:
+            minutes_night_premium = final_date_time_out - datetime_night_in
+    else:
+        return ret
+    
+
+    if minutes_night_premium.days < 0:
+        return ret
+
+    minutes_night_premium = (minutes_night_premium.seconds) / 60
+    ret['data'] = { 'minutes_night_premium': minutes_night_premium,}
+    return ret

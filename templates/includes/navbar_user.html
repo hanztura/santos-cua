@@ -1,0 +1,16 @@
+
+                    
+<form action="{% url 'public:logout' %}" method="post" class="form-inline">
+{% csrf_token %}
+
+{% if user.employee.contact.image %}
+    <img class="rounded-circle m-0" src="/media/{{ user.employee.contact.image }}" width="40px" height="40px" alt="{{ user.employee.abbr }} image">
+{% endif %}
+
+<!-- if no uploaded image -->
+{% if not user.employee.contact.image %}
+    <img  class="rounded-circle m-0" src="/media/contacts/images/empty.png" width="40px" height="40px" alt="{{ user.employee.abbr }} image">
+{% endif %}
+
+<input type="submit" value="logout" class="btn btn-link cursor-pointer  text-info">
+</form>

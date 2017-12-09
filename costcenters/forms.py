@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Branch, Project, Work
+from .models import Branch, Project, Work, Holiday
 from contacts.models import Contact
 
 
@@ -24,4 +24,10 @@ class WorkForm(forms.ModelForm):
         model = Work
         exclude = []
 
+
+class HolidayForm(forms.ModelForm):
+    """docstring for ContactForm"""
+    class Meta:
+        model = Holiday
+        exclude = []
 

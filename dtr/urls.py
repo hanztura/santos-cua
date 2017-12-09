@@ -1,8 +1,9 @@
 from django.conf.urls import url
+from django.views.generic import TemplateView
 
 from . import views
-from .models import Timetable, Schedule, ScheduleTimetable, Log, Attendance, AttendanceLog
-from .forms import TimetableForm, ScheduleForm, LogForm, AttendanceForm, AttendanceLogFormSet
+from .models import Timetable, Schedule, ScheduleTimetable, Log, Attendance, AttendanceLog, GraceLateIn
+from .forms import TimetableForm, ScheduleForm, LogForm, AttendanceForm, AttendanceLogFormSet, GraceLateInForm
 
 
 class TimetableVars():
@@ -91,10 +92,33 @@ class AttendanceVars():
 
     model_form = AttendanceForm
 
+
+class GraceLateInVars():
+    context_search_placeholder = 'type alias/remarks'
+    model = GraceLateIn
+    model_name = 'gracelatein'
+    model_name_plural = 'gracelateins'
+    model_app = 'dtr'
+    model_order_by = ('id')
+
+    model_url_index = 'dtr:' + model_name + '_index'
+    model_url_detail = 'dtr:' + model_name + '_detail'
+    model_url_new = 'dtr:' + model_name + '_new'
+    model_url_create = 'dtr:' + model_name + '_create'
+    model_url_update = 'dtr:' + model_name + '_update'
+    model_url_destroy = 'dtr:' + model_name + '_destroy'
+
+    model_template_index = 'dtr/' + model_name_plural + '/index.html'
+    model_template_new = 'dtr/' + model_name_plural + '/new.html'
+    model_template_detail = 'dtr/' + model_name_plural + '/detail.html'
+
+    model_form = GraceLateInForm
         
+
 app_name = 'dtr'
 urlpatterns = [
     url(r'^$', views.DTRViews.index, name='index'),
+    url(r'^process-dtr$', views.DTRViews.dtr, name='process_dtr'),
 
     url(r'^timetables$', views.TimetableViews.index, {'model_vars': TimetableVars}, name='timetable_index'),
     url(r'^timetables/(?P<id>[0-9]+)/$', views.TimetableViews.detail, {'model_vars': TimetableVars}, name='timetable_detail'),
@@ -123,4 +147,11 @@ urlpatterns = [
     url(r'^attendance/new/(?P<id>[0-9]+)*$', views.AttendanceViews.new, {'model_vars': AttendanceVars}, name='attendance_new'),
     url(r'^attendance/create/', views.AttendanceViews.create, {'model_vars': AttendanceVars}, name='attendance_create'),
     url(r'^attendance/(?P<id>[0-9]+)/delete/$', views.AttendanceViews.destroy, {'model_vars': AttendanceVars}, name='attendance_destroy'),
+
+    url(r'^grace$', views.GraceLateInViews.index, {'model_vars': GraceLateInVars}, name='gracelatein_index'),
+    url(r'^grace/(?P<id>[0-9]+)/$', views.GraceLateInViews.detail, {'model_vars': GraceLateInVars}, name='gracelatein_detail'),
+    url(r'^grace/(?P<id>[0-9]+)/update/', views.GraceLateInViews.update, {'model_vars': GraceLateInVars}, name='gracelatein_update'),
+    url(r'^grace/new/(?P<id>[0-9]+)*$', views.GraceLateInViews.new, {'model_vars': GraceLateInVars}, name='gracelatein_new'),
+    url(r'^grace/create/', views.GraceLateInViews.create, {'model_vars': GraceLateInVars}, name='gracelatein_create'),
+    url(r'^grace/(?P<id>[0-9]+)/delete/$', views.GraceLateInViews.destroy, {'model_vars': GraceLateInVars}, name='gracelatein_destroy'),
 ]

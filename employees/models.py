@@ -17,7 +17,7 @@ class Employee(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     # 2017-11-29
-    user = models.OneToOneField(User, null=True, related_name='user')
+    user = models.OneToOneField(User, null=True, related_name='employee')
     supervisors = models.ForeignKey('self', null=True, related_name='sups')
 
     def __str__(self):

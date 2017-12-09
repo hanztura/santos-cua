@@ -32,23 +32,3 @@ class City(models.Model):
 
     def __str__(self):
         return ' | '.join([self.alias, self.city])
-
-
-class Holiday(models.Model):
-
-    
-    holiday_type_choices = [
-        (1, 'Regular'),
-        (2, 'Special'),
-        (3, 'Others')
-    ]
-
-    date = models.DateField()    
-    city = models.ForeignKey(City)
-    holiday = models.CharField(max_length=50)
-    holiday_type = models.IntegerField(choices=holiday_type_choices)
-
-    def __str__(self):
-        return ' | '.join([self.holiday, str(self.date), str(self.city.alias)])
-
-

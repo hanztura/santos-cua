@@ -11,7 +11,7 @@ class IssuanceVars():
     model_name = 'issuance'
     model_name_plural = 'issuances'
     model_app = 'leaves'
-    model_order_by = ('employee', 'leave', 'valid_from_date')
+    model_order_by = ('employee', 'leave', 'valid_on_year')
 
     model_url_index = model_app + ':' + model_name + '_index'
     model_url_detail = model_app + ':' + model_name + '_detail'

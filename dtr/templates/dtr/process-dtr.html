@@ -1,0 +1,18 @@
+{% extends "base_santoscua.html" %}
+{% block title %}Process DTR{% endblock title %}
+
+{% block content %}
+    <h1>DTR</h1>
+    
+    <form action="{% url 'dtr:process_dtr' %}" method="post"  enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p}}
+        
+        <label>From</label>
+        <input type="date" name="date_from">
+        <label>To</label>
+        <input type="date" name="date_to">
+        <br>
+        <input type="submit" value="Process">
+    </form>
+{% endblock content %}

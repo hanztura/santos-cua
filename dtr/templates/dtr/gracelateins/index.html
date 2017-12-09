@@ -2,10 +2,12 @@
 
 {% load  humanize %}
 
-{% block title %}{{ model_name_plural|title }} - {{ model_app|upper }}{% endblock title %}
+{% block title %}Grace Period - {{ model_app|upper }}{% endblock title %}
 
 {% block nav %}
     {{ block.super }}
+    
+    {% include '../home.html' %}
 
     <!-- new -->
     <a class="nav-item nav-link" href="{% url model_url_new %}">
@@ -35,7 +37,7 @@
 
 {% block content %}
     
-    <h1 class="">{{ model_app|upper }} {{ model_name|title }} - List</h1>
+    <h1 class="">{{ model_app|upper }} Grace Period - List</h1>
     
     {% if messages %}
     <div class="row flex-spaces">
@@ -63,31 +65,50 @@
                 <table class="table table-condensed table-bordered table-hover table-striped color-black">
                     <thead class="table-inverse">
                         <tr class="text-capitalize ">
-                            <th class="text-center">date</th>
-                            <th class="text-center">city</th>
-                            <th class="text-center">holiday</th>
-                            <th class="text-center">actions</th>
+                            <th class="text-center" rowspan="2">alias</th>
+                            <th class="text-center" rowspan="2">type</th>
+                            <th class="text-center" rowspan="2">sub-type</th>
+                            <th class="text-center" colspan="2">value</th>
+                            <th class="text-center" rowspan="2">remarks</th>
+                            <th class="text-center" rowspan="2">actions</th>
+                        </tr>
+                        <tr class="text-capitalize">
+                            <th>minutes</th>
+                            <th>type</th>
                         </tr>
                     </thead>
                         {% for record in model_list %}
                             <tr>
-                                <!-- date -->
+                                <!-- alias -->
                                 <td class="text-left">
-                                    <a href="{% url model_url_detail record.id %}" target="_blank" title="view {{ model_name }} detail">
-                                    {{ record.date }}
+                                    <a href="{% url model_url_detail record.id %}" target="_blank" title="view grace detail">
+                                    {{ record.alias }}
                                     </a>
                                 </td>
 
-                                <!-- city -->
+                                <!-- type -->
                                 <td class="text-left">
-                                    <a href="{% url model_url_detail record.id %}" target="_blank" title="view {{ model_name }} detail">
-                                    {{ record.city }}
-                                    </a>
+                                    {{ record.get_grace_type }}
                                 </td>
 
-                                <!-- holiday -->
+                                <!-- sub-type -->
                                 <td class="text-left">
-                                    {{ record.holiday }}
+                                    {{ record.get_grace_subtype }}
+                                </td>
+
+                                <!-- minutes -->
+                                <td class="text-left">
+                                    {{ record.value_minutes }}
+                                </td>
+
+                                <!-- type -->
+                                <td class="text-left">
+                                    {{ record.value_type }}
+                                </td>
+
+                                <!-- remarks -->
+                                <td class="text-left">
+                                    {{ record.remarks }}
                                 </td>
 
                                 <!-- actions -->
@@ -120,7 +141,7 @@
             </div>
 
             <!-- pagination bottom --> 
-            {% include 'includes/index_pagination.html' with model_list=model_list model_name='timetables' %}
+            {% include 'includes/index_pagination.html' with model_list=model_list model_name=model_name_plural %}
         {% endif %}
         
         <!-- if recordset is blank -->

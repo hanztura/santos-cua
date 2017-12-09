@@ -6,6 +6,8 @@
 
 {% block nav %}
     {{ block.super }}
+    
+    {% include '../home.html' %}
 
     <!-- new -->
     <a class="nav-item nav-link" href="{% url model_url_new %}">
@@ -63,6 +65,7 @@
                 <table class="table table-condensed table-bordered table-hover table-striped color-black">
                     <thead class="table-inverse">
                         <tr class="text-capitalize ">
+                            <th class="text-center">id</th>
                             <th class="text-center">date</th>
                             <th class="text-center">employee</th>
                             <th class="text-center">remarks</th>
@@ -71,10 +74,17 @@
                     </thead>
                         {% for record in model_list %}
                             <tr>
+                                <!-- id -->
+                                <td class="text-left">
+                                    <a href="{% url model_url_detail record.id %}" target="_blank" title="view {{ model_name }} detail">
+                                    {{ record.id }}
+                                    </a>
+                                </td>
+
                                 <!-- date -->
                                 <td class="text-left">
                                     <a href="{% url model_url_detail record.id %}" target="_blank" title="view {{ model_name }} detail">
-                                    {{ record.date }}
+                                    {{ record.date|date:"D, M d Y" }}
                                     {% if record.is_rest_day %}
                                     <span class="badge success">rest</span>
                                     {% endif %}

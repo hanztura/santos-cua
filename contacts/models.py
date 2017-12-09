@@ -56,8 +56,8 @@ class Contact(models.Model):
 		first_name = self.first_name if self.first_name else ''
 		middle_name = self.middle_name[0] if self.middle_name else ''
 
-		full_name = ', '.join([last_name, first_name])
-		full_name = (' '.join([full_name, middle_name + '.'])) if middle_name else full_name
+		full_name = '{last}, {first}'.format(last=last_name, first=first_name)
+		full_name = ('{last}, {first} {middle}.'.format(last=last_name, first=first_name, middle=middle_name)) if middle_name else full_name
 		return full_name
 
 	@property
@@ -68,6 +68,19 @@ class Contact(models.Model):
 		else:
 			ret = None
 			return ret
+
+	@property
+	def get_tin_1(self):
+		ret = self.tax_num
+		if ret:
+			tax_len = len(ret)
+			if tax_len == 9 or tax_len == 12:
+				# separate every 3 into '-'
+				temp = [ret[i:i+3] for i in range(0, tax_len, 3)]
+				ret = '-'.join(temp)
+		else:
+			ret = 'no TIN encoded'
+		return ret
 
 class Address(models.Model):
 	class Meta:

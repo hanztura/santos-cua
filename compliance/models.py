@@ -90,7 +90,7 @@ class Client(models.Model):
             prefix = 'EC'
 
             # add trailing zeroes to series
-            series = str(100000 + series)[1:]
+            series = str(series).zfill(5)
 
             ret = '-'.join([prefix, year,series])
 

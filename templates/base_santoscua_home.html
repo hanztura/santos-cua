@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4.0.0-alpha.6-dist/css/bootstrap.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome-4.7.0/css/font-awesome.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/paper.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/palette-red-cyan.css' %}">
     <style type="text/css">
         html, body {
             height: 100%;
@@ -56,6 +57,9 @@
         .bg-red-light{
             background-color: #FF8A80;
         }
+        .bg-maroon{
+            background-color: #9D1821;
+        }
         .bg-grey{
             background-color: #424242;
         }
@@ -67,13 +71,11 @@
 </head>
 <body>
 
-    <nav class="navbar sticky navbar-toggleable-md navbar-inverse bg-red container-fluid"  id='id-top'>
-        <div class="row col-12 align-bottom text-left">
+    <nav class="navbar sticky navbar-toggleable-md navbar-inverse dark-primary-color container-fluid"  id='id-top'>
+        <div class="row col-12 align-bottom text-left m-0 p-0">
             <!-- brand -->
-              <div class="col-xs-12 col-md-2">
-                <a class="navbar-brand text-warning" href="{% url 'public:home' %}" target="">
-                    SantosCuaAAC
-                </a>
+              <div class="col-xs-12 col-md-2 row m-0 p-0">
+                {% include "includes/navbar_brand.html" %}
               </div>
 
               <!-- links -->
@@ -103,18 +105,7 @@
 
                 {% if user.is_authenticated %}
                 <div class="col-xs-12 col-md-4 text-sm">
-                    
-                    <form action="{% url 'public:logout' %}" method="post" class="form-inline">
-                        {% csrf_token %}
-                        
-
-                          
-                        <span class="text-white">
-                            Hi {{ user|upper }}!
-                        </span>
-                        <input type="submit" value="logout" class="btn btn-link cursor-pointer  text-info">
-                    </form>
-
+                    {% include "includes/navbar_user.html" %}
                 </div>
                 {% endif %}
               </div>
@@ -152,13 +143,7 @@
 
         <div id="id-bottom"></div>
 
-        <div class="copyright text-center text-white bg-red fixed-bottom p-0">
-            <div class="container-fluid">
-                <small>Copyright &copy; Santos-Cua AAC Firm Management 2017</small>
-                |
-                <small>part of FirmOne project by: <span class="badge default" title="Visit iamhanz now!"><a href="http://iamhanz.com" target="_blank" class="text-white">iamhanz.com</a></span></small>
-            </div>
-        </div>
+        {% include "includes/footer_santoscua.html" %}
 
         <div class="btn-page-top-bottom">
             <a href="#id-top"><i class="fa fa-arrow-up bg-fade"></i></a>

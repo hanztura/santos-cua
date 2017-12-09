@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.admin import widgets
 
-from .models import Timetable, Schedule, ScheduleTimetable, Log, Attendance, AttendanceLog
+from .models import Timetable, Schedule, ScheduleTimetable, Log, Attendance, AttendanceLog, GraceLateIn
 from contacts.models import Contact
 
 
@@ -33,6 +33,13 @@ class AttendanceForm(forms.ModelForm):
         exclude = []
 
 
+class GraceLateInForm(forms.ModelForm):
+    """docstring for ContactForm"""
+    class Meta:
+        model = GraceLateIn
+        exclude = []
+
+
 # class ScheduleTimetableForm(forms.ModelForm):
 #     """docstring for ContactForm"""
 #     class Meta:
@@ -48,12 +55,13 @@ class AttendanceForm(forms.ModelForm):
 ScheduleTimetableFormSet = forms.inlineformset_factory(
     Schedule,
     ScheduleTimetable,
-    exclude = ('schedule', 'sub_project', 'work'),
+    exclude = ('schedule', 'work'),
     labels = {
         'minutes_threshold_early_in': 'early in',
         'minutes_threshold_late_in': 'late in',
         'minutes_threshold_early_out': 'early out',
         'minutes_threshold_late_out': 'late out',
+        'sub_project': 'project/sub-project'
     },
     extra=1,
 )
@@ -73,3 +81,9 @@ AttendanceLogFormSet = forms.inlineformset_factory(
     },
     extra=1,
 )
+
+
+class ProcessDTRForm(forms.Form):
+    employee_id =  forms.IntegerField()
+
+ProcessDTRFormset = forms.formset_factory(ProcessDTRForm, extra=2)

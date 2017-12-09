@@ -63,14 +63,10 @@
                 <table class="table table-condensed table-bordered table-hover table-striped color-black">
                     <thead class="table-inverse">
                         <tr class="text-capitalize ">
-                            <th class="text-center" rowspan="2">employee</th>
-                            <th class="text-center" colspan="2">validity date</th>
-                            <th class="text-center" rowspan="2">hours</th>
-                            <th class="text-center" rowspan="2">actions</th>
-                        </tr>
-                        <tr class="text-capitalize ">
-                            <th class="text-center">from</th>
-                            <th class="text-center">until</th>
+                            <th class="text-center">employee</th>
+                            <th class="text-center">validity year</th>
+                            <th class="text-center">hours</th>
+                            <th class="text-center">actions</th>
                         </tr>
                     </thead>
                         {% for record in model_list %}
@@ -82,17 +78,10 @@
                                     </a>
                                 </td>
 
-                                <!-- date from -->
+                                <!-- validity year -->
                                 <td class="text-left">
                                     <a href="{% url model_url_detail record.id %}" target="_blank" title="view {{ model_name }} detail">
-                                    {{ record.valid_from_date }}
-                                    </a>
-                                </td>
-
-                                <!-- date until -->
-                                <td class="text-left">
-                                    <a href="{% url model_url_detail record.id %}" target="_blank" title="view {{ model_name }} detail">
-                                    {{ record.valid_until_date }}
+                                    {{ record.valid_on_year }}
                                     </a>
                                 </td>
 

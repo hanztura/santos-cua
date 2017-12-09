@@ -6,6 +6,8 @@
 
 {% block nav %}
     {{ block.super }}
+    
+    {% include '../home.html' %}
 
     <!-- new -->
     <a class="nav-item nav-link" href="{% url model_url_new %}">
